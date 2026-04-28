@@ -49,7 +49,11 @@ public final class PatchesToNeoForgeBiomeModifiers {
 			HolderSet<Biome> biomeSet = patch.biomes().orElse(overworld);
 			Map<ResourceKey<PlacedFeature>, Holder<PlacedFeature>> replacements = patch.replacements();
 			HolderSet<PlacedFeature> removed = HolderSet.direct(replacements.keySet().stream().map(placedFeatures::getOrThrow).toList());
-			HolderSet<PlacedFeature> added = HolderSet.direct(replacements.values().stream().toList());
+			// distinct() — иначе несколько keys, ведущих на один placed feature
+			// (напр. TREES_BADLANDS и TREES_WINDSWEPT_SAVANNA → badlandsTrees), приведут
+			// к дублю в HolderSet, и AddFeaturesBiomeModifier добавит фичу дважды,
+			// что валит FeatureSorter с "Feature order cycle".
+			HolderSet<PlacedFeature> added = HolderSet.direct(replacements.values().stream().distinct().toList());
 
 			ResourceKey<BiomeModifier> removeId = convertKey(patch.id().withSuffix("_remove"));
 			ResourceKey<BiomeModifier> addId = convertKey(patch.id().withSuffix("_add"));

@@ -4,14 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
-import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.GameRules;
-import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
 
 import java.util.List;
 

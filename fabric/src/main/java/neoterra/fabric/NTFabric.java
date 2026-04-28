@@ -10,9 +10,7 @@ import net.minecraft.network.chat.Component;
 import neoterra.NTCommon;
 import neoterra.client.data.NTLanguageProvider;
 import neoterra.client.data.NTTranslationKeys;
-import neoterra.platform.RegistryUtil;
-import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
+import neoterra.fabric.biome.FabricBiomePatches;
 
 public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 
@@ -20,7 +18,7 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 	public void onInitialize() {
 		NTCommon.bootstrap();
 
-		RegistryUtil.createDataRegistry(NTRegistries.BIOME_MODIFIER, BiomeModifier.CODEC, false);
+		FabricBiomePatches.register();
 	}
 
 	//TODO merge this with forge's datagen since they're the same now

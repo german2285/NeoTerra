@@ -8,73 +8,53 @@ import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.biomepatch.BiomeFeaturePatches;
+import neoterra.data.worldgen.preset.biomepatch.Filter;
+import neoterra.data.worldgen.preset.biomepatch.Order;
 import neoterra.data.worldgen.preset.biomepatch.PatchAdd;
 import neoterra.data.worldgen.preset.biomepatch.PatchReplace;
 import neoterra.data.worldgen.preset.settings.MiscellaneousSettings;
 import neoterra.data.worldgen.preset.settings.Preset;
-import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
-import neoterra.world.worldgen.biome.modifier.BiomeModifiers;
-import neoterra.world.worldgen.biome.modifier.Filter;
-import neoterra.world.worldgen.biome.modifier.Order;
 
-//TODO organize all of this stuff cause god damn
 public class PresetBiomeModifierData {
-	public static final ResourceKey<BiomeModifier> ADD_EROSION = createKey("add_erosion");
-	public static final ResourceKey<BiomeModifier> ADD_SNOW_PROCESSING = createKey("add_snow_processing");
-	public static final ResourceKey<BiomeModifier> ADD_SWAMP_SURFACE = createKey("add_swamp_surface");
+	public static final ResourceLocation ADD_EROSION = id("add_erosion");
+	public static final ResourceLocation ADD_SNOW_PROCESSING = id("add_snow_processing");
+	public static final ResourceLocation ADD_SWAMP_SURFACE = id("add_swamp_surface");
 
-	public static final ResourceKey<BiomeModifier> REPLACE_PLAINS_TREES = createKey("replace_plains_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_FOREST_TREES = createKey("replace_forest_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_FLOWER_FOREST_TREES = createKey("replace_flower_forest_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_BIRCH_TREES = createKey("replace_birch_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_DARK_FOREST_TREES = createKey("replace_dark_forest_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_SAVANNA_TREES = createKey("replace_savanna_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_SWAMP_TREES = createKey("replace_swamp_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_MEADOW_TREES = createKey("replace_meadow_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_FIR_TREES = createKey("replace_fir_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_WINDSWEPT_HILLS_FIR_TREES = createKey("replace_windswept_hills_fir_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_PINE_TREES = createKey("replace_pine_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_SPRUCE_TREES = createKey("replace_spruce_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_SPRUCE_TUNDRA_TREES = createKey("replace_spruce_tundra_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_REDWOOD_TREES = createKey("replace_redwood_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_JUNGLE_TREES = createKey("replace_jungle_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_JUNGLE_EDGE_TREES = createKey("replace_jungle_edge_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_BADLANDS_TREES = createKey("replace_badlands_trees");
-	public static final ResourceKey<BiomeModifier> REPLACE_WOODED_BADLANDS_TREES = createKey("replace_wooded_badlands_trees");
+	public static final ResourceLocation REPLACE_PLAINS_TREES = id("replace_plains_trees");
+	public static final ResourceLocation REPLACE_FOREST_TREES = id("replace_forest_trees");
+	public static final ResourceLocation REPLACE_FLOWER_FOREST_TREES = id("replace_flower_forest_trees");
+	public static final ResourceLocation REPLACE_BIRCH_TREES = id("replace_birch_trees");
+	public static final ResourceLocation REPLACE_DARK_FOREST_TREES = id("replace_dark_forest_trees");
+	public static final ResourceLocation REPLACE_SAVANNA_TREES = id("replace_savanna_trees");
+	public static final ResourceLocation REPLACE_SWAMP_TREES = id("replace_swamp_trees");
+	public static final ResourceLocation REPLACE_MEADOW_TREES = id("replace_meadow_trees");
+	public static final ResourceLocation REPLACE_FIR_TREES = id("replace_fir_trees");
+	public static final ResourceLocation REPLACE_WINDSWEPT_HILLS_FIR_TREES = id("replace_windswept_hills_fir_trees");
+	public static final ResourceLocation REPLACE_PINE_TREES = id("replace_pine_trees");
+	public static final ResourceLocation REPLACE_SPRUCE_TREES = id("replace_spruce_trees");
+	public static final ResourceLocation REPLACE_SPRUCE_TUNDRA_TREES = id("replace_spruce_tundra_trees");
+	public static final ResourceLocation REPLACE_REDWOOD_TREES = id("replace_redwood_trees");
+	public static final ResourceLocation REPLACE_JUNGLE_TREES = id("replace_jungle_trees");
+	public static final ResourceLocation REPLACE_JUNGLE_EDGE_TREES = id("replace_jungle_edge_trees");
+	public static final ResourceLocation REPLACE_BADLANDS_TREES = id("replace_badlands_trees");
+	public static final ResourceLocation REPLACE_WOODED_BADLANDS_TREES = id("replace_wooded_badlands_trees");
 
-	public static final ResourceKey<BiomeModifier> ADD_MARSH_BUSH = createKey("add_marsh_bush");
-	public static final ResourceKey<BiomeModifier> ADD_PLAINS_BUSH = createKey("add_plains_bush");
-	public static final ResourceKey<BiomeModifier> ADD_STEPPE_BUSH = createKey("add_stepps_bush");
-	public static final ResourceKey<BiomeModifier> ADD_COLD_STEPPE_BUSH = createKey("add_cold_steppe_bush");
-	public static final ResourceKey<BiomeModifier> ADD_TAIGA_SCRUB_BUSH = createKey("add_taiga_scrub_bush");
+	public static final ResourceLocation ADD_MARSH_BUSH = id("add_marsh_bush");
+	public static final ResourceLocation ADD_PLAINS_BUSH = id("add_plains_bush");
+	public static final ResourceLocation ADD_STEPPE_BUSH = id("add_stepps_bush");
+	public static final ResourceLocation ADD_COLD_STEPPE_BUSH = id("add_cold_steppe_bush");
+	public static final ResourceLocation ADD_TAIGA_SCRUB_BUSH = id("add_taiga_scrub_bush");
 
-	public static final ResourceKey<BiomeModifier> ADD_FOREST_GRASS = createKey("add_forest_grass");
-	public static final ResourceKey<BiomeModifier> ADD_BIRCH_FOREST_GRASS = createKey("add_birch_forest_grass");
-
-	public static void bootstrap(Preset preset, BootstrapContext<BiomeModifier> ctx) {
-		HolderGetter<PlacedFeature> placedFeatures = ctx.lookup(Registries.PLACED_FEATURE);
-		HolderGetter<Biome> biomes = ctx.lookup(Registries.BIOME);
-
-		BiomeFeaturePatches patches = collectPatches(preset, placedFeatures, biomes);
-
-		for (PatchAdd patch : patches.adds()) {
-			ctx.register(patch.id(), toBiomeModifier(patch));
-		}
-		for (PatchReplace patch : patches.replaces()) {
-			ctx.register(patch.id(), toBiomeModifier(patch));
-		}
-	}
+	public static final ResourceLocation ADD_FOREST_GRASS = id("add_forest_grass");
+	public static final ResourceLocation ADD_BIRCH_FOREST_GRASS = id("add_birch_forest_grass");
 
 	public static BiomeFeaturePatches collectPatches(Preset preset, HolderGetter<PlacedFeature> placedFeatures, HolderGetter<Biome> biomes) {
 		MiscellaneousSettings miscellaneous = preset.miscellaneous();
@@ -231,19 +211,7 @@ public class PresetBiomeModifierData {
 		return new BiomeFeaturePatches(adds, replaces);
 	}
 
-	private static BiomeModifier toBiomeModifier(PatchAdd patch) {
-		if (patch.filter().isPresent()) {
-			Filter filter = patch.filter().get();
-			return BiomeModifiers.add(patch.order(), patch.step(), filter.behavior(), filter.biomes(), patch.features());
-		}
-		return BiomeModifiers.add(patch.order(), patch.step(), patch.features());
-	}
-
-	private static BiomeModifier toBiomeModifier(PatchReplace patch) {
-		return BiomeModifiers.replace(patch.step(), patch.biomes(), patch.replacements());
-	}
-
-	private static ResourceKey<BiomeModifier> createKey(String name) {
-        return ResourceKey.create(NTRegistries.BIOME_MODIFIER, NTCommon.location(name));
+	private static ResourceLocation id(String name) {
+		return NTCommon.location(name);
 	}
 }

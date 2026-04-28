@@ -27,7 +27,6 @@ import neoterra.platform.DataGenUtil;
 import neoterra.registries.NTRegistries;
 import neoterra.world.worldgen.feature.NTFeatures;
 import neoterra.world.worldgen.feature.SwampSurfaceFeature;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
 import neoterra.world.worldgen.noise.module.Noise;
 import neoterra.world.worldgen.structure.rule.StructureRule;
 
@@ -44,7 +43,6 @@ public class Datapacks {
 			Cloner.Factory factory = new Cloner.Factory();
 			RegistryDataLoader.WORLDGEN_REGISTRIES.forEach(registryData -> registryData.runWithArguments(factory::addCodec));
 			factory.addCodec(NTRegistries.NOISE, Noise.DIRECT_CODEC);
-			factory.addCodec(NTRegistries.BIOME_MODIFIER, BiomeModifier.CODEC);
 			factory.addCodec(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC);
 			factory.addCodec(NTRegistries.PRESET, Preset.DIRECT_CODEC);
 			return builder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), registryAccess,factory).patches();

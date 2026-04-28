@@ -8,7 +8,6 @@ import neoterra.data.worldgen.preset.settings.Preset;
 import neoterra.platform.RegistryUtil;
 import neoterra.registries.NTBuiltInRegistries;
 import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifiers;
 import neoterra.world.worldgen.densityfunction.NTDensityFunctions;
 import neoterra.world.worldgen.feature.NTFeatures;
 import neoterra.world.worldgen.feature.chance.NTChanceModifiers;
@@ -42,7 +41,6 @@ public class NTCommon {
 		NTFeatures.bootstrap();
 		NTHeightProviderTypes.bootstrap();
 		NTFloatProviderTypes.bootstrap();
-		BiomeModifiers.bootstrap();
 		NTSurfaceRules.bootstrap();
 		StructureRules.bootstrap();
 

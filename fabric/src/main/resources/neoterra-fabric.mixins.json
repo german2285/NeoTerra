@@ -9,8 +9,7 @@
   ],
   "mixins": [
   	"MixinChunkStatusTasks",
-  	"MixinMinecraftServer",
-  	"MixinBiomeModificationImpl"
+  	"MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1

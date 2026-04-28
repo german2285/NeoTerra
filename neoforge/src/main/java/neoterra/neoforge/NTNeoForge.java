@@ -1,5 +1,7 @@
 package neoterra.neoforge;
 
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
@@ -7,24 +9,30 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import neoterra.NTCommon;
 import neoterra.client.data.NTLanguageProvider;
 import neoterra.client.data.NTTranslationKeys;
-import neoterra.platform.RegistryUtil;
 import neoterra.platform.neoforge.RegistryUtilImpl;
-import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
+import neoterra.world.worldgen.biome.modifier.neoforge.PrependFeaturesBiomeModifier;
 
 @Mod("neoterra")
 public class NTNeoForge {
+    private static final DeferredRegister<MapCodec<? extends net.neoforged.neoforge.common.world.BiomeModifier>> BIOME_MODIFIER_SERIALIZERS =
+        DeferredRegister.create(NeoForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, NTCommon.MOD_ID);
+
+    static {
+        BIOME_MODIFIER_SERIALIZERS.register("prepend_features", () -> PrependFeaturesBiomeModifier.CODEC);
+    }
 
     public NTNeoForge(IEventBus modEventBus, ModContainer container) {
     	NTCommon.bootstrap();
 
-    	RegistryUtil.createDataRegistry(NTRegistries.BIOME_MODIFIER, BiomeModifier.CODEC, false);
+    	BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
 
     	if (FMLEnvironment.dist == Dist.CLIENT) {
     		modEventBus.addListener(NTNeoForgeClient::registerPresetEditors);

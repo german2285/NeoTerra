@@ -36,24 +36,24 @@ NeoTerra — мультилоадерный (Fabric + NeoForge) мод для Mi
 
 - `MOD_ID = "neoterra"`, плюс `LEGACY_MOD_ID = "terraforged"` (см. `NTCommon.java`) — присутствие легаси-id важно для совместимости с ресурсами/датапаками TerraForged.
 - Логгер: `NTCommon.LOGGER` (Log4j2 имя `"NeoTerra"`).
-- Бутстрап общего слоя: `NTCommon.bootstrap()` вызывается из `NTFabric.onInitialize()` и из конструктора `NTNeoForge`. Внутри по очереди дёргаются `bootstrap()` всех подсистем (`NTBuiltInRegistries`, `NTFeatures`, `Noises`, `Domains`, `CurveFunctions`, `BiomeModifiers`, `NTSurfaceRules`, `StructureRules`, `TemplatePlacements`, `TemplateDecorators`, `NTPlacementModifiers`, `NTChanceModifiers`, `NTHeightProviderTypes`, `NTFloatProviderTypes`, `NTDensityFunctions`) и регистрируются динамические data-registries (`NOISE`, `PRESET`, `STRUCTURE_RULE`). `BIOME_MODIFIER` data-registry создаётся уже в платформенных entry point'ах после общего bootstrap'а.
+- Бутстрап общего слоя: `NTCommon.bootstrap()` вызывается из `NTFabric.onInitialize()` и из конструктора `NTNeoForge`. Внутри по очереди дёргаются `bootstrap()` всех подсистем (`NTBuiltInRegistries`, `NTFeatures`, `Noises`, `Domains`, `CurveFunctions`, `NTSurfaceRules`, `StructureRules`, `TemplatePlacements`, `TemplateDecorators`, `NTPlacementModifiers`, `NTChanceModifiers`, `NTHeightProviderTypes`, `NTFloatProviderTypes`, `NTDensityFunctions`) и регистрируются динамические data-registries (`NOISE`, `PRESET`, `STRUCTURE_RULE`).
 
 ### Регистрации
 
 Двухуровневая схема в `common/src/main/java/neoterra/registries`:
 
-- `NTRegistries` — все `ResourceKey<Registry<...>>` (как для типовых codec-реестров `*_TYPE`, так и для data-driven контента: `NOISE`, `BIOME_MODIFIER`, `STRUCTURE_RULE`, `PRESET`).
+- `NTRegistries` — все `ResourceKey<Registry<...>>` (как для типовых codec-реестров `*_TYPE`, так и для data-driven контента: `NOISE`, `STRUCTURE_RULE`, `PRESET`).
 - `NTBuiltInRegistries` — встроенные (in-code) реестры `MapCodec`-фабрик, создаются через `RegistryUtil.createRegistry(...)`.
 - Data-driven реестры регистрируются `RegistryUtil.createDataRegistry(key, codec, synced)` из `NTCommon.bootstrap()`.
 
-`BIOME_MODIFIER_TYPE` сознательно использует ключ `forge:biome_modifier_serializers` для совместимости со схемой Forge/NeoForge biome modifier API.
+Biome modifier'ы НЕ хранятся в собственном `NTRegistries`-реестре — они применяются через нативные API лоадеров (см. ниже раздел о biome modification).
 
 ### Worldgen
 
 Основной код — `common/.../world/worldgen/`. Наиболее важные подпакеты:
 
 - `noise/` (`module/`, `domain/`, `function/`) — собственный noise-фреймворк (Noise, Domain, CurveFunction) с codec-реестрами типов; bootstrapped через `Noises`/`Domains`/`CurveFunctions`.
-- `biome/` — `NTBiomes`, `NTClimateSampler`, параметры климата (`Continentalness`, `Humidity`, `Temperature`, `Weirdness`, `Erosion`), `modifier/` — система biome modifier'ов с codec-реестром, общая для обоих лоадеров.
+- `biome/` — `NTBiomes`, `NTClimateSampler`, параметры климата (`Continentalness`, `Humidity`, `Temperature`, `Weirdness`, `Erosion`).
 - `densityfunction/` — кастомные `DensityFunction`'ы.
 - `surface/` — `NTSurfaceRules` и инфраструктура поверх ванильных `SurfaceRules` (требует широких access wideners, см. ниже).
 - `feature/` — `NTFeatures` плюс подсистемы `chance/`, `placement/`, `template/` (template/placement/decorator с собственными codec-реестрами).
@@ -86,8 +86,18 @@ Datapack-настройки и пресеты: `common/.../data/worldgen/preset/
 
 Общие language-провайдеры — в `common/.../client/data/NTLanguageProvider.java` (вызываются из обоих entry points). Fabric датаген запускается через `runData` (Fabric API datagen, `fabric-api.datagen.modid=neoterra`), NeoForge — через `GatherDataEvent`. Сгенерированные ассеты складываются в `*/src/main/generated` (Fabric) или `*/src/generated/resources` (NeoForge); оба пути добавлены в `sourceSets.main.resources` и заигнорены в git.
 
+### Biome modification
+
+Описательный слой — `common/.../data/worldgen/preset/biomepatch/` (`BiomeFeaturePatches`, `PatchAdd`, `PatchReplace`, `Filter`, `Order`). `PresetBiomeModifierData.collectPatches(preset, ...)` строит из пресета список patches; дальше — платформенно:
+
+- На **NeoForge**: `BiomeModifierPlatform.addPatches(...)` (через `@ExpectPlatform`) добавляет в `RegistrySetBuilder` запись в `NeoForgeRegistries.Keys.BIOME_MODIFIERS`. Конвертер `PatchesToNeoForgeBiomeModifiers` мапит patches на встроенные `AddFeaturesBiomeModifier`/`RemoveFeaturesBiomeModifier`. Для `Order.PREPEND` (нет нативного аналога) есть кастомный `PrependFeaturesBiomeModifier`, codec которого регистрируется в `NeoForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS` через `DeferredRegister` в `NTNeoForge`.
+- На **Fabric**: `FabricBiomePatches.register()` вызывается в `NTFabric.onInitialize()` и регистрирует фиксированный набор модификаторов через `BiomeModifications.create(...).add(...)` (Fabric Biome API V1). Активность пресета определяется по proxy-проверке: `selCtx.getPlacedFeatureRegistry().get(PresetPlacedFeatures.ERODE) != null`. Order.PREPEND теряется (Fabric API кладёт в конец фазы).
+
+Trade-off Fabric'а: модификаторы регистрируются статически на onInitialize, до загрузки пресета, поэтому boolean-флаги `MiscellaneousSettings.customBiomeFeatures` / `naturalSnowDecorator` / `smoothLayerDecorator` больше не управляют конкретно набором модификаторов — они применяются всегда, когда NT-датапак активен.
+
 ## Ловушки, на которые легко наступить
 
 - При добавлении/правке `@ExpectPlatform`-метода в `common` — он обязан быть реализован в `fabric/.../platform/fabric/*Impl.java` И `neoforge/.../platform/neoforge/*Impl.java`. Architectury генерирует диспетчер; пропуск одной реализации ломает только соответствующий лоадер и часто только в runtime.
-- Регистрационные ключи биом-модификаторов используют namespace `forge:` (`forge:biome_modifier`, `forge:biome_modifier_serializers`) для совместимости — не менять на `neoterra:`/`neoforge:`.
+- Описательные `PatchAdd`/`PatchReplace` идентифицируются через `ResourceLocation` (не `ResourceKey<...>`); при добавлении нового patch'а используй `NTCommon.location(...)` и не пытайся привязать к удалённому `NTRegistries.BIOME_MODIFIER`.
+- На NeoForge codec кастомного `PrependFeaturesBiomeModifier` должен быть зарегистрирован ДО `GatherDataEvent` — текущий `DeferredRegister` делает это автоматически, но если переписать регистрацию вручную (например, через bootstrap-метод вместо DeferredRegister) — не забыть про порядок.
 - `common/build.gradle` содержит `compileOnly "com.electronwill.night-config:toml:3.6.7"` (для конфиг-кода), он не уезжает в shadow-jar — runtime эта зависимость должна предоставляться лоадером.

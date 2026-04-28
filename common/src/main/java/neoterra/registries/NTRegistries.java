@@ -7,7 +7,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.settings.Preset;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
 import neoterra.world.worldgen.feature.chance.ChanceModifier;
 import neoterra.world.worldgen.feature.template.decorator.TemplateDecorator;
 import neoterra.world.worldgen.feature.template.placement.TemplatePlacement;
@@ -23,11 +22,9 @@ public class NTRegistries {
 	public static final ResourceKey<Registry<MapCodec<? extends ChanceModifier>>> CHANCE_MODIFIER_TYPE = createKey("worldgen/chance_modifier_type");
 	public static final ResourceKey<Registry<MapCodec<? extends TemplatePlacement<?>>>> TEMPLATE_PLACEMENT_TYPE = createKey("worldgen/template_placement_type");
 	public static final ResourceKey<Registry<MapCodec<? extends TemplateDecorator<?>>>> TEMPLATE_DECORATOR_TYPE = createKey("worldgen/template_decorator_type");
-	public static final ResourceKey<Registry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_TYPE = createKey("forge:biome_modifier_serializers");
 	public static final ResourceKey<Registry<MapCodec<? extends StructureRule>>> STRUCTURE_RULE_TYPE = createKey("worldgen/structure_rule_type");
 
 	public static final ResourceKey<Registry<Noise>> NOISE = createKey("worldgen/noise");
-	public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIER = createKey("forge:biome_modifier");
 	public static final ResourceKey<Registry<StructureRule>> STRUCTURE_RULE = createKey("worldgen/structure_rule");
 
 	@Deprecated

@@ -13,9 +13,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.RegistryDataLoader;
+import neoterra.platform.BiomeModifierPlatform;
 import neoterra.platform.RegistryUtil;
 import neoterra.data.worldgen.preset.PresetBiomeData;
-import neoterra.data.worldgen.preset.PresetBiomeModifierData;
 import neoterra.data.worldgen.preset.PresetConfiguredCarvers;
 import neoterra.data.worldgen.preset.PresetConfiguredFeatures;
 import neoterra.data.worldgen.preset.PresetDimensionTypes;
@@ -25,7 +25,6 @@ import neoterra.data.worldgen.preset.PresetNoiseRouterData;
 import neoterra.data.worldgen.preset.PresetPlacedFeatures;
 import neoterra.data.worldgen.preset.PresetStructureRuleData;
 import neoterra.registries.NTRegistries;
-import neoterra.world.worldgen.biome.modifier.BiomeModifier;
 import neoterra.world.worldgen.noise.module.Noise;
 import neoterra.world.worldgen.structure.rule.StructureRule;
 
@@ -53,7 +52,7 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 		RegistrySetBuilder builder = new RegistrySetBuilder();
 		this.addPatch(builder, NTRegistries.PRESET, (preset, ctx) -> ctx.register(KEY, preset));
 		this.addPatch(builder, NTRegistries.NOISE, PresetNoiseData::bootstrap);
-		this.addPatch(builder, NTRegistries.BIOME_MODIFIER, PresetBiomeModifierData::bootstrap);
+		BiomeModifierPlatform.addPatches(builder, this);
 		this.addPatch(builder, NTRegistries.STRUCTURE_RULE, PresetStructureRuleData::bootstrap);
 		this.addPatch(builder, Registries.CONFIGURED_FEATURE, (preset, ctx) -> {
 			PresetConfiguredFeatures.bootstrap(preset, ctx);
@@ -73,7 +72,6 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 		RegistryDataLoader.WORLDGEN_REGISTRIES.forEach(registryData -> registryData.runWithArguments(factory::addCodec));
 		RegistryUtil.getDynamicRegistries().forEach(registryData -> registryData.runWithArguments(factory::addCodec));
 		factory.addCodec(NTRegistries.NOISE, Noise.DIRECT_CODEC);
-		factory.addCodec(NTRegistries.BIOME_MODIFIER, BiomeModifier.CODEC);
 		factory.addCodec(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC);
 		factory.addCodec(NTRegistries.PRESET, Preset.DIRECT_CODEC);
 		return builder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), registries, factory).patches();

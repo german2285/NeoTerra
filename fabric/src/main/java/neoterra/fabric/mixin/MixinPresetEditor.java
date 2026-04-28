@@ -9,15 +9,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.client.gui.screens.worldselection.PresetEditor;
-import net.minecraft.world.level.levelgen.presets.WorldPresets;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import neoterra.NTCommon;
 import neoterra.client.gui.screen.presetconfig.PresetConfigScreen;
 
-// why the fuck does mojang hardcode everything??
-@Deprecated 
+// PresetEditor.EDITORS — это Map.of(...) в clinit. Mojang не даёт public API
+// зарегистрировать editor для своего worldgen preset, поэтому Redirect перехватывает
+// вызов Map.of и возвращает modifiable HashMap, в который PUT'аем editor для нашего
+// neoterra:default.
+@Deprecated
 @Mixin(PresetEditor.class)
 interface MixinPresetEditor {
-	
-	// there has to be a better way to do this right?
+
 	@Redirect(
 		method = "<clinit>",
 		at = @At(
@@ -30,7 +35,8 @@ interface MixinPresetEditor {
 		Map<Object, Object> map = new HashMap<>();
 		map.put(k1, v1);
 		map.put(k2, v2);
-		map.put(Optional.of(WorldPresets.NORMAL), (PresetEditor) (screen, ctx) -> new PresetConfigScreen(screen));
+		ResourceKey<WorldPreset> ntDefault = ResourceKey.create(Registries.WORLD_PRESET, NTCommon.location("default"));
+		map.put(Optional.of(ntDefault), (PresetEditor) (screen, ctx) -> new PresetConfigScreen(screen));
 		return map;
     }
 }

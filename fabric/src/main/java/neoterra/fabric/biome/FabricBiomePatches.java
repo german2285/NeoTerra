@@ -5,6 +5,7 @@ import java.util.Set;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
@@ -26,9 +27,12 @@ import neoterra.data.worldgen.preset.PresetPlacedFeatures;
 //   (customBiomeFeatures, naturalSnowDecorator и т.д.) больше не отключают модификаторы.
 // — Fabric BiomeModifications кладёт фичи в конец фазы; Order.PREPEND теряется.
 // — Fabric API не даёт BiomeSelectionContext доступ к placed feature registry, поэтому
-//   активность NT-датапака определяется ленивым try/catch: если ResourceKey
-//   PresetPlacedFeatures.* не зарегистрирован (datapack не активен),
-//   addFeature/removeFeature кидают IllegalArgumentException, и мы тихо выходим.
+//   активность NT-датапака определяется через proxy `hasPlacedFeature(ERODE)` в фазе
+//   REPLACEMENTS (фаза ADDITIONS уже отработала, и если NT активна, add_erosion
+//   успел положить ERODE в биом). Для ADDITIONS — try/catch вокруг addFeature
+//   (там нет destructive remove перед добавлением, так что промах в catch безопасен).
+//   Без этого checking'а в фазе REPLACEMENTS removeFeature(step, vanillaKey) удалял
+//   бы ванильные фичи в любом мире с установленным модом, даже без NT-датапака.
 public final class FabricBiomePatches {
 	private static final GenerationStep.Decoration VEG = GenerationStep.Decoration.VEGETAL_DECORATION;
 	private static final GenerationStep.Decoration RAW = GenerationStep.Decoration.RAW_GENERATION;
@@ -108,17 +112,18 @@ public final class FabricBiomePatches {
 			.add(ModificationPhase.REPLACEMENTS,
 				BiomeSelectors.includeByKey(biomes),
 				(selCtx, modCtx) -> {
+					if (!isNeoTerraActive(selCtx)) return;
 					BiomeModificationContext.GenerationSettingsContext gen = modCtx.getGenerationSettings();
-					try {
-						replacements.forEach((oldKey, newKey) -> {
-							if (gen.removeFeature(step, oldKey)) {
-								gen.addFeature(step, newKey);
-							}
-						});
-					} catch (IllegalArgumentException e) {
-						// NT placed feature ResourceKey is not registered → datapack not active.
-					}
+					replacements.forEach((oldKey, newKey) -> {
+						if (gen.removeFeature(step, oldKey)) {
+							gen.addFeature(step, newKey);
+						}
+					});
 				});
+	}
+
+	private static boolean isNeoTerraActive(BiomeSelectionContext selCtx) {
+		return selCtx.hasPlacedFeature(PresetPlacedFeatures.ERODE);
 	}
 
 	private static void add(String id, GenerationStep.Decoration step, Set<ResourceKey<Biome>> biomes,

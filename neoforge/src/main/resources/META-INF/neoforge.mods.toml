@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mixins]]
+    config = "neoterra-common.mixins.json"
+
+[[mixins]]
+    config = "neoterra-neoforge.mixins.json"
+
+[[mods]]
+    modId="neoterra"
+    displayName="NeoTerra"
+    version="0.0.6"
+    authors="dags,Won-Ton"
+    credits="dags,Won-Ton"
+    logoFile="logo.png"
+    displayURL="https://github.com/racoonman2/neoterra/"
+    issueTrackerURL="https://github.com/racoonman2/neoterra/issues"
+    description="A continuation of https://github.com/TerraForged/TerraForged"
+
+[[dependencies.neoterra]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[21,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.neoterra]]
+	modId = "minecraft"
+	mandatory = true
+	versionRange = "[1.21.1,)"
+	ordering = "NONE"
+	side = "BOTH"

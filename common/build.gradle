@@ -1,0 +1,21 @@
+architectury {
+    common("fabric", "neoforge")
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/neoterra.accesswidener")
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	compileOnly "com.electronwill.night-config:toml:3.6.7"
+	//compileOnly "lithostitched-forge:1.0.0"
+}
+
+repositories {
+
+}
+
+remapJar {
+    archiveClassifier.set("${rootProject.minecraft_version}")
+}

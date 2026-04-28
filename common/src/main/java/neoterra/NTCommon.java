@@ -27,7 +27,6 @@ import neoterra.world.worldgen.surface.rule.NTSurfaceRules;
 
 public class NTCommon {
 	public static final String MOD_ID = "neoterra";
-	public static final String LEGACY_MOD_ID = "terraforged";
 	public static final Logger LOGGER = LogManager.getLogger("NeoTerra");
 
 	public static void bootstrap() {

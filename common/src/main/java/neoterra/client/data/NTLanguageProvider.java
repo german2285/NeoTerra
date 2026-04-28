@@ -25,11 +25,11 @@ public final class NTLanguageProvider {
 			this.add(NTTranslationKeys.GUI_SELECT_PRESET_MISSING_LEGACY_PRESETS, "Couldn't find any legacy presets");
 			this.add(NTTranslationKeys.GUI_SELECT_PRESET_TITLE, "Presets & Defaults");
 			this.add(NTTranslationKeys.GUI_DEFAULT_PRESET_NAME, "Default");
-			this.add(NTTranslationKeys.GUI_DEFAULT_LEGACY_PRESET_NAME, "TerraForged - Default (Legacy)");
-			this.add(NTTranslationKeys.GUI_BEAUTIFUL_PRESET_NAME, "TerraForged - Beautiful (Legacy)");
-			this.add(NTTranslationKeys.GUI_HUGE_BIOMES_PRESET_NAME, "TerraForged - Huge Biomes (Legacy)");
-			this.add(NTTranslationKeys.GUI_LITE_PRESET_NAME, "TerraForged - Lite (Legacy)");
-			this.add(NTTranslationKeys.GUI_VANILLAISH_PRESET_NAME, "TerraForged - Vanilla-ish (Legacy)");
+			this.add(NTTranslationKeys.GUI_DEFAULT_LEGACY_PRESET_NAME, "Default (Legacy)");
+			this.add(NTTranslationKeys.GUI_BEAUTIFUL_PRESET_NAME, "Beautiful (Legacy)");
+			this.add(NTTranslationKeys.GUI_HUGE_BIOMES_PRESET_NAME, "Huge Biomes (Legacy)");
+			this.add(NTTranslationKeys.GUI_LITE_PRESET_NAME, "Lite (Legacy)");
+			this.add(NTTranslationKeys.GUI_VANILLAISH_PRESET_NAME, "Vanilla-ish (Legacy)");
 			this.add(NTTranslationKeys.GUI_WORLD_SETTINGS_TITLE, "World Settings");
 			this.add(NTTranslationKeys.GUI_SURFACE_SETTINGS_TITLE, "Surface Settings (Experimental)");
 			this.add(NTTranslationKeys.GUI_CAVE_SETTINGS_TITLE, "Cave Settings (Experimental)");
@@ -212,7 +212,7 @@ public final class NTLanguageProvider {
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_BIOME_EDGE_TYPE), "The noise type");
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_TERRAIN_SEED_OFFSET), "A seed offset used to randomise terrain distribution");
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_FANCY_MOUNTAINS), "Carries out extra processing on mountains to make them look even nicer. Can be disabled to improve performance slightly.");
-			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_LEGACY_MOUNTAIN_SCALING), "Changes mountain scaling to be compatible with legacy TerraForged");
+			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_LEGACY_MOUNTAIN_SCALING), "Uses legacy mountain scaling for compatibility with older presets");
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_RIVER_SEED_OFFSET), "A seed offset used to randomise river distribution");
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_SALT), "A random seed value for the structure.");
 			this.add(Tooltips.translationKey(NTTranslationKeys.GUI_BUTTON_DISABLED), "Prevent this structure from generating.");

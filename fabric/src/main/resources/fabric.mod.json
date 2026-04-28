@@ -3,14 +3,14 @@
   "id": "neoterra",
   "version": "${version}",
   "name": "NeoTerra",
-  "description": "A continuation of https://github.com/TerraForged/TerraForged",
+  "description": "Custom world generation for Minecraft: terrain, biomes, surface rules, structures, presets",
   "authors": [
     "dags",
     "Won-Ton"
   ],
   "contact": {
-    "repo": "https://github.com/racoonman2/neoterra/",
-    "issues": "https://github.com/racoonman2/neoterra/issues"
+    "repo": "https://github.com/german2285/NeoTerra/",
+    "issues": "https://github.com/german2285/NeoTerra/issues"
   },
   "license": "MIT",
   "environment": "*",

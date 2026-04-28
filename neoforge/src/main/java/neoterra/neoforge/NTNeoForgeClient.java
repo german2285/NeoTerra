@@ -10,12 +10,12 @@ import neoterra.client.gui.screen.presetconfig.PresetConfigScreen;
 
 class NTNeoForgeClient {
 
-	public static final ResourceKey<WorldPreset> TERRAFORGED = ResourceKey.create(
+	public static final ResourceKey<WorldPreset> DEFAULT = ResourceKey.create(
 		Registries.WORLD_PRESET,
-		ResourceLocation.fromNamespaceAndPath(NTCommon.MOD_ID, "terraforged")
+		ResourceLocation.fromNamespaceAndPath(NTCommon.MOD_ID, "default")
 	);
 
 	public static void registerPresetEditors(RegisterPresetEditorsEvent event) {
-		event.register(TERRAFORGED, (screen, ctx) -> new PresetConfigScreen(screen));
+		event.register(DEFAULT, (screen, ctx) -> new PresetConfigScreen(screen));
 	}
 }

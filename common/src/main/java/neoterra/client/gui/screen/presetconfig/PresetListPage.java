@@ -47,8 +47,8 @@ import neoterra.platform.ConfigUtil;
 class PresetListPage extends BisectedPage<PresetConfigScreen, PresetEntry, AbstractWidget> {
 	private static final Path PRESET_PATH = ConfigUtil.rtf("presets");
 	private static final Path EXPORT_PATH = ConfigUtil.rtf("exports");
-	private static final Path LEGACY_PRESET_PATH = ConfigUtil.legacy("presets");
-	
+
+
 	private static final Predicate<String> IS_VALID = Pattern.compile("^[A-Za-z0-9\\-_ ]+$").asPredicate();
 
 	private EditBox input;
@@ -187,7 +187,6 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, PresetEntry, Abstr
 		
 		List<PresetEntry> entries = new ArrayList<>();
 		entries.addAll(this.listPresets(PRESET_PATH));
-		entries.addAll(this.listPresets(LEGACY_PRESET_PATH));
 
 		entries.add(new PresetEntry(Component.translatable(NTTranslationKeys.GUI_DEFAULT_PRESET_NAME).withStyle(ChatFormatting.GRAY), Presets.makeNTDefault(), true, this));
 		entries.add(new PresetEntry(Component.translatable(NTTranslationKeys.GUI_DEFAULT_LEGACY_PRESET_NAME).withStyle(ChatFormatting.GRAY), Presets.makeLegacyDefault(), true, this));

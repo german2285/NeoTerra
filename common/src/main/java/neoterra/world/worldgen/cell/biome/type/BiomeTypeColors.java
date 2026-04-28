@@ -43,7 +43,7 @@ public class BiomeTypeColors {
                 int b = type.getColor().getBlue();
                 properties.setProperty(type.name(), String.format("%02x%02x%02x", r, g, b));
             }
-            properties.store(writer, "TerraForged BiomeType Hex Colors (do not include hash/pound character)");
+            properties.store(writer, "NeoTerra BiomeType Hex Colors (do not include hash/pound character)");
         }
     }
 }

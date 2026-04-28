@@ -15,9 +15,9 @@ license="MIT"
     authors="dags,Won-Ton"
     credits="dags,Won-Ton"
     logoFile="logo.png"
-    displayURL="https://github.com/racoonman2/neoterra/"
-    issueTrackerURL="https://github.com/racoonman2/neoterra/issues"
-    description="A continuation of https://github.com/TerraForged/TerraForged"
+    displayURL="https://github.com/german2285/NeoTerra/"
+    issueTrackerURL="https://github.com/german2285/NeoTerra/issues"
+    description="Custom world generation for Minecraft: terrain, biomes, surface rules, structures, presets"
 
 [[dependencies.neoterra]]
     modId="neoforge"

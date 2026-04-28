@@ -11,6 +11,7 @@
 
 Проект основан на работе:
 - [TerraForged](https://github.com/TerraForged/TerraForged) — оригинальный мод от команды TerraForged
+- [ReTerraForged](https://github.com/racoonman2/ReTerraForged) — продолжение от racoonman2
 - [NeoTerraForged](https://github.com/equalizer32/NeoTerraForged) — порт на NeoForge от Equalizer и контрибьюторов
 
 ## Лицензия

@@ -33,7 +33,7 @@ public record Smoothing(float smoothingRadius, float smoothingRate, Modifier mod
 								int px = x + dx;
 								int pz = z + dz;
 								Cell neighbour = cellMap.getCellRaw(px, pz);
-								if (!neighbour.isAbsent()) {
+								if (neighbour != Cell.EMPTY) {
 									float value = neighbour.height;
 									float weight = 1.0F - dist2 / radiusSq;
 									total += value * weight;

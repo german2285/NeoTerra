@@ -10,6 +10,9 @@ import neoterra.world.worldgen.noise.module.Noise;
 import neoterra.world.worldgen.noise.module.Noises;
 
 public class IslandPopulator implements CellPopulator {
+	public static final float DEFAULT_INLAND_POINT = 0.0F;
+	public static final float DEFAULT_COAST_POINT = DEFAULT_INLAND_POINT + 0.1F;
+
 	private CellPopulator ocean;
     private IslandType upper;
 	private Interpolation interpolation;

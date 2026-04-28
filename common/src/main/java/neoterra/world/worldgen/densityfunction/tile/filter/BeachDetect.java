@@ -35,11 +35,11 @@ public record BeachDetect(Levels levels, ControlPoints transition) implements Fi
     
     private float grad(Cell a, Cell b, Cell def) {
         int distance = 17;
-        if (a.isAbsent()) {
+        if (a == Cell.EMPTY) {
             a = def;
             distance -= 8;
         }
-        if (b.isAbsent()) {
+        if (b == Cell.EMPTY) {
             b = def;
             distance -= 8;
         }

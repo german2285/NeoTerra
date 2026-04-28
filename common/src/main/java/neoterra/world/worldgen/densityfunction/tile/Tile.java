@@ -104,7 +104,7 @@ public class Tile implements SafeCloseable, Filterable, CellLookup {
 	public Cell getCellRaw(int x, int z) {
 		int index = Tile.this.blockSize.indexOf(x, z);
         if (index < 0 || index >= Tile.this.blockSize.arraySize()) {
-            return Cell.empty();
+            return Cell.EMPTY;
         }
         return Tile.this.cache[index];
 	}

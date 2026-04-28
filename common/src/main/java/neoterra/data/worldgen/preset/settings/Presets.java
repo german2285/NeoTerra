@@ -13,7 +13,7 @@ import neoterra.data.worldgen.preset.settings.TerrainSettings.Terrain;
 import neoterra.data.worldgen.preset.settings.WorldSettings.Continent;
 import neoterra.data.worldgen.preset.settings.WorldSettings.ControlPoints;
 import neoterra.data.worldgen.preset.settings.WorldSettings.Properties;
-import neoterra.world.worldgen.cell.continent.IslandPopulator;
+import neoterra.world.worldgen.cell.terrain.populator.IslandPopulator;
 import neoterra.world.worldgen.noise.function.DistanceFunction;
 
 public class Presets {

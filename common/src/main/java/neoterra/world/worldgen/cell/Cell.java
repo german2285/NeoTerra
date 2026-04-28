@@ -9,13 +9,7 @@ import neoterra.world.worldgen.cell.terrain.TerrainType;
 
 public class Cell {
     private static final Cell DEFAULTS = new Cell();
-    private static final Cell EMPTY = new Cell() {
-
-    	@Override
-        public boolean isAbsent() {
-            return true;
-        }
-    };
+    public static final Cell EMPTY = new Cell();
     private static final ThreadLocalPool<Cell> POOL = new ThreadLocalPool<>(32, Cell::new, Cell::reset);
     public static final ThreadLocal<Resource<Cell>> LOCAL = ThreadLocal.withInitial(() -> {
         return new SimpleResource<>(new Cell(), Cell::reset);
@@ -44,8 +38,6 @@ public class Cell {
     public float weirdness;
     public float temperature;
     public float moisture;
-    
-    @Deprecated(forRemoval = true)
     public float beachNoise;
 
     public Cell() {
@@ -89,16 +81,6 @@ public class Cell {
     public Cell reset() {
         this.copyFrom(Cell.DEFAULTS);
         return this;
-    }
-
-    @Deprecated(forRemoval = true)
-    public boolean isAbsent() {
-        return false;
-    }
-
-    @Deprecated(forRemoval = true)
-    public static Cell empty() {
-        return Cell.EMPTY;
     }
 
     public static Resource<Cell> getResource() {

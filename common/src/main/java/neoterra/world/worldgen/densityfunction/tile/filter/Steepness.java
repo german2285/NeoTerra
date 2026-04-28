@@ -20,7 +20,7 @@ public record Steepness(int radius, float scaler, float waterLevel) implements F
 					int x = cx + dx * this.radius;
 					int z = cz + dz * this.radius;
 					Cell neighbour = cellMap.getCellRaw(x, z);
-					if (!neighbour.isAbsent()) {
+					if (neighbour != Cell.EMPTY) {
 						float height = Math.max(neighbour.height, this.waterLevel);
 						totalHeightDif += Math.abs(cell.height - height) / this.radius;
 					}

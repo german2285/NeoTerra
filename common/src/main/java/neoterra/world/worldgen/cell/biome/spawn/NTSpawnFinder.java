@@ -9,16 +9,15 @@ import net.minecraft.world.level.biome.Climate.ParameterPoint;
 import net.minecraft.world.level.biome.Climate.Sampler;
 import net.minecraft.world.level.biome.Climate.TargetPoint;
 import neoterra.world.worldgen.biome.NTClimateSampler;
-	
-@Deprecated(forRemoval = true)
-public class SpawnFinderFix {
+
+public class NTSpawnFinder {
 	public Result result;
 
-	public SpawnFinderFix(List<ParameterPoint> list, Sampler sampler) {
+	public NTSpawnFinder(List<ParameterPoint> list, Sampler sampler) {
 		if ((Object) sampler instanceof NTClimateSampler rtfClimateSampler) {
 			BlockPos center = rtfClimateSampler.getSpawnSearchCenter();
 
-			this.result = SpawnFinderFix.getSpawnPositionAndFitness(list, sampler, center.getX(), center.getZ());
+			this.result = NTSpawnFinder.getSpawnPositionAndFitness(list, sampler, center.getX(), center.getZ());
 			this.radialSearch(list, sampler, 2048.0f, 512.0f);
 			this.radialSearch(list, sampler, 512.0f, 32.0f);
 		}
@@ -30,7 +29,7 @@ public class SpawnFinderFix {
 		BlockPos blockPos = this.result.location();
 		while (i <= f) {
 			int j = blockPos.getX() + (int) (Math.sin(h) * (double) i);
-			Result result = SpawnFinderFix.getSpawnPositionAndFitness(list, sampler, j,
+			Result result = NTSpawnFinder.getSpawnPositionAndFitness(list, sampler, j,
 					blockPos.getZ() + (int) (Math.cos(h) * (double) i));
 			if (result.fitness() < this.result.fitness()) {
 				this.result = result;

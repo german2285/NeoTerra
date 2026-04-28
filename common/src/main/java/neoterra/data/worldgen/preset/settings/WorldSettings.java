@@ -3,7 +3,7 @@ package neoterra.data.worldgen.preset.settings;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import neoterra.world.worldgen.cell.continent.IslandPopulator;
+import neoterra.world.worldgen.cell.terrain.populator.IslandPopulator;
 import neoterra.world.worldgen.noise.function.DistanceFunction;
 
 public class WorldSettings {

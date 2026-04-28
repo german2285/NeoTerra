@@ -57,7 +57,8 @@ public class ErodeFeature extends Feature<Config> {
 			neoterra.world.worldgen.cell.heightmap.Heightmap heightmap = generatorContext.generator.getHeightmap();
 			Levels levels = heightmap.levels();
 			Noise rand = Noises.white(heightmap.climate().randomSeed(), 1);
-			Noise desertErosionVariance = makeDesertErosionVariance(levels);
+			// TODO expose desert erosion variance to config
+			Noise desertErosionVariance = Noises.mul(Noises.perlin(435, 8, 1), levels.scale(16));
 			BlockPos.MutableBlockPos pos = new MutableBlockPos();
 			Config config = placeContext.config();
 			for(int x = 0; x < 16; x++) {
@@ -93,14 +94,6 @@ public class ErodeFeature extends Feature<Config> {
 		}
 	}
 	
-	// TODO expose this to config
-	@Deprecated(forRemoval = true)
-	private static Noise makeDesertErosionVariance(Levels levels) {
-		Noise noise = Noises.perlin(435, 8, 1);
-		return Noises.mul(noise, levels.scale(16));
-	}
-	
-	// TODO ^
 	private static void erodeDesert(Noise variance, Levels levels, ChunkAccess chunk, Cell cell, BlockPos.MutableBlockPos pos, int surfaceY) {
 		float min = levels.ground(10);
 		float threshold = levels.ground(40);

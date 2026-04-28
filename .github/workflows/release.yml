@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: [self-hosted, hetzner]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew build --no-daemon --stacktrace
+
+      - name: Resolve version metadata
+        id: meta
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          MC=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "mc=${MC}" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" == *-alpha* || "$TAG" == *-beta* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p release
+          cp "fabric/build/libs/neoterra-${{ steps.meta.outputs.version }}-fabric-${{ steps.meta.outputs.mc }}.jar" "release/neoterra-${{ steps.meta.outputs.version }}-fabric-${{ steps.meta.outputs.mc }}.jar"
+          cp "neoforge/build/libs/neoterra-${{ steps.meta.outputs.version }}.jar" "release/neoterra-${{ steps.meta.outputs.version }}-neoforge-${{ steps.meta.outputs.mc }}.jar"
+          ls -la release/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          prerelease: ${{ steps.meta.outputs.prerelease == 'true' }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true

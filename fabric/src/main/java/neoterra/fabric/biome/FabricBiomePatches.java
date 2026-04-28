@@ -5,7 +5,6 @@ import java.util.Set;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
@@ -26,8 +25,10 @@ import neoterra.data.worldgen.preset.PresetPlacedFeatures;
 //   статический набор модификаторов NT default preset; флаги MiscellaneousSettings
 //   (customBiomeFeatures, naturalSnowDecorator и т.д.) больше не отключают модификаторы.
 // — Fabric BiomeModifications кладёт фичи в конец фазы; Order.PREPEND теряется.
-// — Активность пресета определяется по proxy: наличие PresetPlacedFeatures.ERODE в
-//   placed feature registry (он есть только когда активен NT-датапак).
+// — Fabric API не даёт BiomeSelectionContext доступ к placed feature registry, поэтому
+//   активность NT-датапака определяется ленивым try/catch: если ResourceKey
+//   PresetPlacedFeatures.* не зарегистрирован (datapack не активен),
+//   addFeature/removeFeature кидают IllegalArgumentException, и мы тихо выходим.
 public final class FabricBiomePatches {
 	private static final GenerationStep.Decoration VEG = GenerationStep.Decoration.VEGETAL_DECORATION;
 	private static final GenerationStep.Decoration RAW = GenerationStep.Decoration.RAW_GENERATION;
@@ -105,14 +106,18 @@ public final class FabricBiomePatches {
 			Map<ResourceKey<PlacedFeature>, ResourceKey<PlacedFeature>> replacements) {
 		BiomeModifications.create(NTCommon.location(id))
 			.add(ModificationPhase.REPLACEMENTS,
-				BiomeSelectors.includeByKey(biomes).and(FabricBiomePatches::isNeoTerraActive),
+				BiomeSelectors.includeByKey(biomes),
 				(selCtx, modCtx) -> {
 					BiomeModificationContext.GenerationSettingsContext gen = modCtx.getGenerationSettings();
-					replacements.forEach((oldKey, newKey) -> {
-						if (gen.removeFeature(step, oldKey)) {
-							gen.addFeature(step, newKey);
-						}
-					});
+					try {
+						replacements.forEach((oldKey, newKey) -> {
+							if (gen.removeFeature(step, oldKey)) {
+								gen.addFeature(step, newKey);
+							}
+						});
+					} catch (IllegalArgumentException e) {
+						// NT placed feature ResourceKey is not registered → datapack not active.
+					}
 				});
 	}
 
@@ -120,19 +125,23 @@ public final class FabricBiomePatches {
 			ResourceKey<PlacedFeature> feature) {
 		BiomeModifications.create(NTCommon.location(id))
 			.add(ModificationPhase.ADDITIONS,
-				BiomeSelectors.includeByKey(biomes).and(FabricBiomePatches::isNeoTerraActive),
-				(selCtx, modCtx) -> modCtx.getGenerationSettings().addFeature(step, feature));
+				BiomeSelectors.includeByKey(biomes),
+				(selCtx, modCtx) -> safeAddFeature(modCtx, step, feature));
 	}
 
 	private static void addOverworld(String id, GenerationStep.Decoration step, ResourceKey<PlacedFeature> feature) {
 		BiomeModifications.create(NTCommon.location(id))
 			.add(ModificationPhase.ADDITIONS,
-				BiomeSelectors.foundInOverworld().and(FabricBiomePatches::isNeoTerraActive),
-				(selCtx, modCtx) -> modCtx.getGenerationSettings().addFeature(step, feature));
+				BiomeSelectors.foundInOverworld(),
+				(selCtx, modCtx) -> safeAddFeature(modCtx, step, feature));
 	}
 
-	private static boolean isNeoTerraActive(BiomeSelectionContext selCtx) {
-		return selCtx.getPlacedFeatureRegistry().get(PresetPlacedFeatures.ERODE) != null;
+	private static void safeAddFeature(BiomeModificationContext modCtx, GenerationStep.Decoration step, ResourceKey<PlacedFeature> feature) {
+		try {
+			modCtx.getGenerationSettings().addFeature(step, feature);
+		} catch (IllegalArgumentException e) {
+			// NT placed feature ResourceKey is not registered → datapack not active.
+		}
 	}
 
 	private FabricBiomePatches() {}

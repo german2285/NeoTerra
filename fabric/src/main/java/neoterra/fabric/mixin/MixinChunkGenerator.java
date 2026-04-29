@@ -13,6 +13,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.world.level.biome.FeatureSorter;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import neoterra.NTCommon;
 import neoterra.world.worldgen.biome.IInvalidatableFeaturesPerStep;
 import neoterra.world.worldgen.biome.InvalidatableSupplier;
 
@@ -29,13 +30,20 @@ public abstract class MixinChunkGenerator implements IInvalidatableFeaturesPerSt
 			remap = false))
 	private static <T> com.google.common.base.Supplier<T> neoterra$wrapMemoize(
 			com.google.common.base.Supplier<T> arg, Operation<com.google.common.base.Supplier<T>> original) {
+		NTCommon.debug("MixinChunkGenerator: wrapping Suppliers.memoize in ChunkGenerator.<init> (delegate={})",
+			arg.getClass().getName());
 		return new InvalidatableSupplier<>(arg);
 	}
 
 	@Override
 	public void neoterra$invalidateFeaturesPerStep() {
-		if (this.featuresPerStep instanceof InvalidatableSupplier<?> inv) {
+		Supplier<?> sup = this.featuresPerStep;
+		NTCommon.debug("MixinChunkGenerator.invalidate: featuresPerStep instance class={}",
+			sup == null ? "null" : sup.getClass().getName());
+		if (sup instanceof InvalidatableSupplier<?> inv) {
 			inv.invalidate();
+		} else {
+			NTCommon.debug("MixinChunkGenerator.invalidate: featuresPerStep is NOT InvalidatableSupplier — wrap mixin missed");
 		}
 	}
 }

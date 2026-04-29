@@ -11,6 +11,7 @@ public final class InvalidatableSupplier<T> implements Supplier<T> {
 	private volatile T value;
 
 	public InvalidatableSupplier(Supplier<T> delegate) {
+		NTCommon.debug("InvalidatableSupplier: created wrapping {}", delegate.getClass().getName());
 		this.delegate = delegate;
 	}
 

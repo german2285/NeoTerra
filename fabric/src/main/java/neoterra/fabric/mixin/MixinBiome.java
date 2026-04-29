@@ -41,21 +41,37 @@ public abstract class MixinBiome implements IModifiableBiome {
 	@Unique
 	private BiomeGenerationSettings neoterra$modifiedSettings;
 
+	@Unique
+	private boolean neoterra$wrapLogged;
+
+	@Unique
+	private String neoterra$lastAppliedBiomeKey;
+
 	@WrapOperation(method = "getGenerationSettings",
 		at = @At(value = "FIELD",
 			target = "Lnet/minecraft/world/level/biome/Biome;generationSettings:Lnet/minecraft/world/level/biome/BiomeGenerationSettings;",
 			opcode = Opcodes.GETFIELD))
 	private BiomeGenerationSettings neoterra$useModifiedSettings(Biome instance, Operation<BiomeGenerationSettings> original) {
 		BiomeGenerationSettings modified = this.neoterra$modifiedSettings;
+		if (!this.neoterra$wrapLogged) {
+			this.neoterra$wrapLogged = true;
+			NTCommon.debug("MixinBiome wrap: first getGenerationSettings call for biome={} — returning {}",
+				this.neoterra$lastAppliedBiomeKey != null ? this.neoterra$lastAppliedBiomeKey : "<unknown>",
+				modified != null ? "MODIFIED" : "ORIGINAL");
+		}
 		return modified != null ? modified : original.call(instance);
 	}
 
 	@Override
 	public void neoterra$applyPatches(BiomeFeaturePatches patches, Holder<Biome> self, HolderSet<Biome> overworldFallback) {
+		String biomeKey = self.unwrapKey().map(Object::toString).orElse("<unkeyed>");
+		this.neoterra$lastAppliedBiomeKey = biomeKey;
 		this.neoterra$modifiedSettings = null;
+		this.neoterra$wrapLogged = false;
 
 		MixinBiomeGenerationSettings origAccessor = (MixinBiomeGenerationSettings) (Object) this.generationSettings;
 		List<HolderSet<PlacedFeature>> origFeatures = origAccessor.getFeatures();
+		NTCommon.debug("applyPatches[{}]: original features have {} steps", biomeKey, origFeatures.size());
 
 		List<List<Holder<PlacedFeature>>> features = new ArrayList<>(origFeatures.size());
 		for (HolderSet<PlacedFeature> step : origFeatures) {
@@ -65,17 +81,26 @@ public abstract class MixinBiome implements IModifiableBiome {
 		}
 
 		boolean modified = false;
+		int replacesApplied = 0;
+		int addsApplied = 0;
 
 		for (PatchReplace replace : patches.replaces()) {
 			HolderSet<Biome> targetBiomes = replace.biomes().orElse(overworldFallback);
 			if (!holderInSet(self, targetBiomes)) continue;
 			int stepIdx = replace.step().ordinal();
-			if (stepIdx >= features.size()) continue;
+			if (stepIdx >= features.size()) {
+				NTCommon.debug("applyPatches[{}]: replace {} skipped — step {} >= features.size {}",
+					biomeKey, replace.id(), stepIdx, features.size());
+				continue;
+			}
 			List<Holder<PlacedFeature>> stepList = features.get(stepIdx);
 
 			List<Holder<PlacedFeature>> toAdd = new ArrayList<>();
+			int removedCount = 0;
 			for (Map.Entry<ResourceKey<PlacedFeature>, Holder<PlacedFeature>> e : replace.replacements().entrySet()) {
+				int sizeBefore = stepList.size();
 				if (stepList.removeIf(h -> h.is(e.getKey()))) {
+					removedCount += sizeBefore - stepList.size();
 					if (!toAdd.contains(e.getValue())) {
 						toAdd.add(e.getValue());
 					}
@@ -84,6 +109,12 @@ public abstract class MixinBiome implements IModifiableBiome {
 			if (!toAdd.isEmpty()) {
 				stepList.addAll(toAdd);
 				modified = true;
+				replacesApplied++;
+				NTCommon.debug("applyPatches[{}]: replace {} step={} removed={} added={}",
+					biomeKey, replace.id(), replace.step(), removedCount, toAdd.size());
+			} else {
+				NTCommon.debug("applyPatches[{}]: replace {} step={} no-op (none of {} keys matched)",
+					biomeKey, replace.id(), replace.step(), replace.replacements().size());
 			}
 		}
 
@@ -97,7 +128,11 @@ public abstract class MixinBiome implements IModifiableBiome {
 
 			List<Holder<PlacedFeature>> toInsert = new ArrayList<>();
 			add.features().forEach(toInsert::add);
-			if (toInsert.isEmpty()) continue;
+			if (toInsert.isEmpty()) {
+				NTCommon.debug("applyPatches[{}]: add {} step={} empty feature set, skipping",
+					biomeKey, add.id(), add.step());
+				continue;
+			}
 
 			if (add.order() == Order.PREPEND) {
 				stepList.addAll(0, toInsert);
@@ -105,10 +140,13 @@ public abstract class MixinBiome implements IModifiableBiome {
 				stepList.addAll(toInsert);
 			}
 			modified = true;
+			addsApplied++;
+			NTCommon.debug("applyPatches[{}]: add {} step={} order={} inserted={} (step now has {} features)",
+				biomeKey, add.id(), add.step(), add.order(), toInsert.size(), stepList.size());
 		}
 
 		if (!modified) {
-			NTCommon.debug("applyPatches: biome {} unchanged", self.unwrapKey().map(Object::toString).orElse("<unkeyed>"));
+			NTCommon.debug("applyPatches[{}]: unchanged (0 replaces, 0 adds matched)", biomeKey);
 			return;
 		}
 
@@ -118,8 +156,8 @@ public abstract class MixinBiome implements IModifiableBiome {
 
 		Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carvers = origAccessor.getCarvers();
 		this.neoterra$modifiedSettings = new BiomeGenerationSettings(carvers, rebuilt);
-		NTCommon.debug("applyPatches: biome {} modified — features now have {} steps",
-			self.unwrapKey().map(Object::toString).orElse("<unkeyed>"), rebuilt.size());
+		NTCommon.debug("applyPatches[{}]: DONE — {} replaces + {} adds applied, rebuilt {} steps",
+			biomeKey, replacesApplied, addsApplied, rebuilt.size());
 	}
 
 	@Unique

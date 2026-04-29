@@ -1,0 +1,11 @@
+{
+  "feature": "minecraft:ore_granite",
+  "placement": [
+    {
+      "type": "neoterra:blacklist_dimension",
+      "blacklist": [
+        "minecraft:overworld"
+      ]
+    }
+  ]
+}

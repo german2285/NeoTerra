@@ -1,0 +1,18 @@
+{
+  "type": "neoterra:add",
+  "input1": {
+    "type": "neoterra:shift",
+    "input": {
+      "type": "neoterra:simplex",
+      "frequency": 0.041666668,
+      "gain": 0.5,
+      "interpolation": {
+        "value": "CURVE3"
+      },
+      "lacunarity": 2.65,
+      "octaves": 2
+    },
+    "shift": 0
+  },
+  "input2": -0.5
+}

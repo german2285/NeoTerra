@@ -1,0 +1,22 @@
+{
+  "type": "neoterra:add",
+  "input1": {
+    "type": "neoterra:multiply",
+    "input1": {
+      "type": "neoterra:shift",
+      "input": {
+        "type": "neoterra:perlin_ridge",
+        "frequency": 0.04,
+        "gain": 0.975,
+        "interpolation": {
+          "value": "CURVE3"
+        },
+        "lacunarity": 2.0,
+        "octaves": 2
+      },
+      "shift": 746382638
+    },
+    "input2": 0.0078125
+  },
+  "input2": 0.0052083335
+}

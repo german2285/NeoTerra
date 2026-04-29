@@ -1,0 +1,18 @@
+{
+  "feature": "neoterra:shrubs/marsh_bush",
+  "placement": [
+    {
+      "type": "neoterra:legacy_count_extra",
+      "count": 0,
+      "extra_chance": 0.3,
+      "extra_count": 1
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "WORLD_SURFACE"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

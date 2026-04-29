@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "neoterra:jungle/small",
+    "features": [
+      {
+        "chance": 0.2,
+        "feature": "neoterra:jungle/small"
+      },
+      {
+        "chance": 0.3,
+        "feature": "neoterra:jungle/large"
+      },
+      {
+        "chance": 0.4,
+        "feature": "minecraft:jungle_bush"
+      }
+    ]
+  }
+}

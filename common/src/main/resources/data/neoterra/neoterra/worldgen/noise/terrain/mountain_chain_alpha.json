@@ -1,0 +1,57 @@
+{
+  "type": "neoterra:map",
+  "alpha": {
+    "type": "neoterra:clamp",
+    "input": {
+      "type": "neoterra:curve",
+      "curve_function": {
+        "type": "neoterra:interpolation",
+        "value": "CURVE3"
+      },
+      "input": {
+        "type": "neoterra:warp",
+        "domain": {
+          "type": "neoterra:domain",
+          "distance": 250.0,
+          "x": {
+            "type": "neoterra:perlin",
+            "frequency": 0.003003003,
+            "gain": 0.5,
+            "interpolation": {
+              "value": "CURVE3"
+            },
+            "lacunarity": 2.0,
+            "octaves": 2,
+            "seed": 1
+          },
+          "z": {
+            "type": "neoterra:perlin",
+            "frequency": 0.003003003,
+            "gain": 0.5,
+            "interpolation": {
+              "value": "CURVE3"
+            },
+            "lacunarity": 2.0,
+            "octaves": 2,
+            "seed": 2
+          }
+        },
+        "input": {
+          "type": "neoterra:shift",
+          "input": {
+            "type": "neoterra:worley_edge",
+            "distance": 1.0,
+            "distance_function": "EUCLIDEAN",
+            "edge_function": "DISTANCE_2_ADD",
+            "frequency": 0.001
+          },
+          "shift": 0
+        }
+      }
+    },
+    "max": 0.9,
+    "min": 0.0
+  },
+  "from": 0.0,
+  "to": 1.0
+}

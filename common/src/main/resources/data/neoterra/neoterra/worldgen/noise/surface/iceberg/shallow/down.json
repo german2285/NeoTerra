@@ -1,0 +1,26 @@
+{
+  "type": "neoterra:multiply",
+  "input1": {
+    "type": "neoterra:multiply",
+    "input1": {
+      "type": "neoterra:multiply",
+      "input1": {
+        "type": "neoterra:shift",
+        "input": {
+          "type": "neoterra:perlin_ridge",
+          "frequency": 0.016666668,
+          "gain": 0.975,
+          "interpolation": {
+            "value": "CURVE3"
+          },
+          "lacunarity": 2.0,
+          "octaves": 3
+        },
+        "shift": 746382643
+      },
+      "input2": "neoterra:surface/iceberg/shallow/mask"
+    },
+    "input2": "neoterra:surface/iceberg/shallow/fade_down"
+  },
+  "input2": 0.0390625
+}

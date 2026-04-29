@@ -1,0 +1,43 @@
+{
+  "type": "neoterra:cache",
+  "value": {
+    "type": "neoterra:warp",
+    "domain": {
+      "type": "neoterra:domain",
+      "distance": 10.0,
+      "x": {
+        "type": "neoterra:perlin",
+        "frequency": 0.06666667,
+        "gain": 0.5,
+        "interpolation": {
+          "value": "CURVE3"
+        },
+        "lacunarity": 2.0,
+        "octaves": 1,
+        "seed": 746382635
+      },
+      "z": {
+        "type": "neoterra:perlin",
+        "frequency": 0.06666667,
+        "gain": 0.5,
+        "interpolation": {
+          "value": "CURVE3"
+        },
+        "lacunarity": 2.0,
+        "octaves": 1,
+        "seed": 746382636
+      }
+    },
+    "input": {
+      "type": "neoterra:perlin",
+      "frequency": 0.015384615,
+      "gain": 0.5,
+      "interpolation": {
+        "value": "CURVE3"
+      },
+      "lacunarity": 2.0,
+      "octaves": 3,
+      "seed": 746382634
+    }
+  }
+}

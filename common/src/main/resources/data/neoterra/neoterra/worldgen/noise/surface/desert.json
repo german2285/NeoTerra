@@ -1,0 +1,19 @@
+{
+  "type": "neoterra:shift",
+  "input": {
+    "type": "neoterra:multiply",
+    "input1": {
+      "type": "neoterra:perlin",
+      "frequency": 0.125,
+      "gain": 0.5,
+      "interpolation": {
+        "value": "CURVE3"
+      },
+      "lacunarity": 2.0,
+      "octaves": 1,
+      "seed": 12
+    },
+    "input2": 0.041666668
+  },
+  "shift": 746382634
+}

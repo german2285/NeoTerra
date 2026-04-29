@@ -1,0 +1,67 @@
+{
+  "type": "neoterra:chance",
+  "config": {
+    "entries": [
+      {
+        "chance": 0.2,
+        "feature": "neoterra:birch/large",
+        "modifiers": [
+          {
+            "type": "neoterra:elevation",
+            "exclusive": false,
+            "from": 0.25,
+            "to": 0.0
+          },
+          {
+            "type": "neoterra:biome_edge",
+            "exclusive": false,
+            "from": 0.1,
+            "to": 0.3
+          }
+        ]
+      },
+      {
+        "chance": 0.2,
+        "feature": "neoterra:birch/forest",
+        "modifiers": [
+          {
+            "type": "neoterra:elevation",
+            "exclusive": false,
+            "from": 0.3,
+            "to": 0.0
+          },
+          {
+            "type": "neoterra:biome_edge",
+            "exclusive": false,
+            "from": 0.05,
+            "to": 0.2
+          }
+        ]
+      },
+      {
+        "chance": 0.1,
+        "feature": "neoterra:birch/small",
+        "modifiers": [
+          {
+            "type": "neoterra:biome_edge",
+            "exclusive": false,
+            "from": 0.25,
+            "to": 0.0
+          }
+        ]
+      },
+      {
+        "chance": 0.1,
+        "feature": "neoterra:birch/small",
+        "modifiers": [
+          {
+            "type": "neoterra:elevation",
+            "exclusive": false,
+            "from": 0.25,
+            "to": 0.65
+          }
+        ]
+      }
+    ]
+  }
+}

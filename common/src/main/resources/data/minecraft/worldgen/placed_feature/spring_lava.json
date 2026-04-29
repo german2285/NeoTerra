@@ -1,0 +1,11 @@
+{
+  "feature": "minecraft:spring_lava_overworld",
+  "placement": [
+    {
+      "type": "neoterra:blacklist_dimension",
+      "blacklist": [
+        "minecraft:overworld"
+      ]
+    }
+  ]
+}

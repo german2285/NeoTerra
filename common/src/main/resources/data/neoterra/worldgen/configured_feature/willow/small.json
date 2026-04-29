@@ -1,0 +1,20 @@
+{
+  "type": "neoterra:template",
+  "config": {
+    "decorator": {
+      "biome_decorators": {},
+      "default_decorator": []
+    },
+    "paste": {
+      "base_depth": 3,
+      "check_bounds": true
+    },
+    "placement": {
+      "type": "neoterra:tree"
+    },
+    "templates": [
+      "neoterra:structures/trees/willow/small/weeping_willow_small_1.nbt",
+      "neoterra:structures/trees/willow/small/weeping_willow_small_2.nbt"
+    ]
+  }
+}

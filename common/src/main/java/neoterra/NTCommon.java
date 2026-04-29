@@ -29,37 +29,62 @@ import neoterra.world.worldgen.surface.rule.NTSurfaceRules;
 public class NTCommon {
 	public static final String MOD_ID = "neoterra";
 	public static final Logger LOGGER = LogManager.getLogger("NeoTerra");
+	// NeoForge's bundled log4j2.xml puts a ThresholdFilter at INFO on the console appender,
+	// so DEBUG events from a logger whose level is DEBUG still get dropped at the sink.
+	// When the user opts in via -Dneoterra.debug=true we route debug() through info()
+	// to bypass the appender threshold; otherwise it stays at the silent debug level.
+	public static final boolean DEBUG_ENABLED = Boolean.getBoolean("neoterra.debug");
+
+	public static void debug(String message) {
+		if (DEBUG_ENABLED) LOGGER.info(message);
+		else LOGGER.debug(message);
+	}
+
+	public static void debug(String message, Object arg1) {
+		if (DEBUG_ENABLED) LOGGER.info(message, arg1);
+		else LOGGER.debug(message, arg1);
+	}
+
+	public static void debug(String message, Object arg1, Object arg2) {
+		if (DEBUG_ENABLED) LOGGER.info(message, arg1, arg2);
+		else LOGGER.debug(message, arg1, arg2);
+	}
+
+	public static void debug(String message, Object... args) {
+		if (DEBUG_ENABLED) LOGGER.info(message, args);
+		else LOGGER.debug(message, args);
+	}
 
 	public static void bootstrap() {
-		if (Boolean.getBoolean("neoterra.debug")) {
+		if (DEBUG_ENABLED) {
 			Configurator.setLevel("NeoTerra", Level.DEBUG);
 			LOGGER.info("Debug logging enabled (-Dneoterra.debug=true)");
 		}
-		LOGGER.debug("Bootstrap starting");
+		debug("Bootstrap starting");
 		NTBuiltInRegistries.bootstrap();
-		LOGGER.debug("  built-in registries ready");
+		debug("  built-in registries ready");
 		TemplatePlacements.bootstrap();
 		TemplateDecorators.bootstrap();
 		NTChanceModifiers.bootstrap();
 		NTPlacementModifiers.bootstrap();
 		NTDensityFunctions.bootstrap();
-		LOGGER.debug("  feature subsystems registered (templates, chance, placement, density functions)");
+		debug("  feature subsystems registered (templates, chance, placement, density functions)");
 		Noises.bootstrap();
 		Domains.bootstrap();
 		CurveFunctions.bootstrap();
-		LOGGER.debug("  noise subsystems registered (noises, domains, curves)");
+		debug("  noise subsystems registered (noises, domains, curves)");
 		NTFeatures.bootstrap();
 		NTHeightProviderTypes.bootstrap();
 		NTFloatProviderTypes.bootstrap();
 		NTSurfaceRules.bootstrap();
 		StructureRules.bootstrap();
-		LOGGER.debug("  features, providers, surface and structure rules registered");
+		debug("  features, providers, surface and structure rules registered");
 
 		RegistryUtil.createDataRegistry(NTRegistries.NOISE, Noise.DIRECT_CODEC, false);
 		RegistryUtil.createDataRegistry(NTRegistries.PRESET, Preset.DIRECT_CODEC, false);
 		RegistryUtil.createDataRegistry(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC, false);
-		LOGGER.debug("  data registries created (NOISE, PRESET, STRUCTURE_RULE)");
-		LOGGER.debug("Bootstrap complete");
+		debug("  data registries created (NOISE, PRESET, STRUCTURE_RULE)");
+		debug("Bootstrap complete");
 	}
 
 	public static ResourceLocation location(String name) {

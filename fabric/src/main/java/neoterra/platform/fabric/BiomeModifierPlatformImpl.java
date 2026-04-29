@@ -10,6 +10,6 @@ public final class BiomeModifierPlatformImpl {
 		// no-op: on Fabric biome modifiers are registered statically via FabricBiomePatches
 		// using Fabric's BiomeModifications API; nothing extra needs to be added to the
 		// preset patch set.
-		NTCommon.LOGGER.debug("Fabric addPatches: no-op (modifiers registered statically via FabricBiomePatches)");
+		NTCommon.debug("Fabric addPatches: no-op (modifiers registered statically via FabricBiomePatches)");
 	}
 }

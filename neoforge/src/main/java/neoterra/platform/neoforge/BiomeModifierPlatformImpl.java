@@ -9,7 +9,7 @@ import neoterra.data.worldgen.preset.settings.Preset;
 public final class BiomeModifierPlatformImpl {
 
 	public static void addPatches(RegistrySetBuilder builder, Preset preset) {
-		NTCommon.LOGGER.debug("NeoForge addPatches: scheduling BIOME_MODIFIERS bootstrap for preset");
+		NTCommon.debug("NeoForge addPatches: scheduling BIOME_MODIFIERS bootstrap for preset");
 		builder.add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> PatchesToNeoForgeBiomeModifiers.bootstrap(ctx, preset));
 	}
 }

@@ -23,6 +23,7 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.biomepatch.BiomeFeaturePatches;
 import neoterra.data.worldgen.preset.biomepatch.Filter;
 import neoterra.data.worldgen.preset.biomepatch.Order;
@@ -106,7 +107,10 @@ public abstract class MixinBiome implements IModifiableBiome {
 			modified = true;
 		}
 
-		if (!modified) return;
+		if (!modified) {
+			NTCommon.debug("applyPatches: biome {} unchanged", self.unwrapKey().map(Object::toString).orElse("<unkeyed>"));
+			return;
+		}
 
 		List<HolderSet<PlacedFeature>> rebuilt = features.stream()
 			.<HolderSet<PlacedFeature>>map(HolderSet::direct)
@@ -114,6 +118,8 @@ public abstract class MixinBiome implements IModifiableBiome {
 
 		Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carvers = origAccessor.getCarvers();
 		this.neoterra$modifiedSettings = new BiomeGenerationSettings(carvers, rebuilt);
+		NTCommon.debug("applyPatches: biome {} modified — features now have {} steps",
+			self.unwrapKey().map(Object::toString).orElse("<unkeyed>"), rebuilt.size());
 	}
 
 	@Unique

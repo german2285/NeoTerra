@@ -2,6 +2,8 @@ package neoterra.world.worldgen.biome;
 
 import com.google.common.base.Supplier;
 
+import neoterra.NTCommon;
+
 public final class InvalidatableSupplier<T> implements Supplier<T> {
 
 	private final Supplier<T> delegate;
@@ -17,6 +19,7 @@ public final class InvalidatableSupplier<T> implements Supplier<T> {
 		if (!this.cached) {
 			synchronized (this) {
 				if (!this.cached) {
+					NTCommon.debug("InvalidatableSupplier: materializing delegate {}", this.delegate.getClass().getName());
 					this.value = this.delegate.get();
 					this.cached = true;
 				}
@@ -27,6 +30,7 @@ public final class InvalidatableSupplier<T> implements Supplier<T> {
 
 	public void invalidate() {
 		synchronized (this) {
+			NTCommon.debug("InvalidatableSupplier: invalidating (was cached={})", this.cached);
 			this.cached = false;
 			this.value = null;
 		}

@@ -56,12 +56,21 @@ public final class FabricBiomeModifierApplier {
 		// Сбрасываем мемоизированный ChunkGenerator.featuresPerStep — иначе он
 		// останется построенным по немодифицированным биомам, и applyBiomeDecoration
 		// упадёт с IndexOutOfBoundsException на новых фичах.
+		final int[] invalidated = {0};
+		final int[] notInvalidatable = {0};
 		server.getAllLevels().forEach(level -> {
 			Object generator = level.getChunkSource().getGenerator();
 			if (generator instanceof IInvalidatableFeaturesPerStep inv) {
 				inv.neoterra$invalidateFeaturesPerStep();
+				invalidated[0]++;
+			} else {
+				NTCommon.debug("FabricBiomeModifierApplier: generator {} is not IInvalidatableFeaturesPerStep, mixin not applied?",
+					generator.getClass().getName());
+				notInvalidatable[0]++;
 			}
 		});
+		NTCommon.debug("FabricBiomeModifierApplier: invalidated featuresPerStep on {} generators ({} not invalidatable)",
+			invalidated[0], notInvalidatable[0]);
 	}
 
 	private FabricBiomeModifierApplier() {}

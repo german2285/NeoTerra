@@ -1,13 +1,17 @@
 package neoterra.mixin;
 
+import java.util.Optional;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup.RegistryLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.Structure.GenerationContext;
@@ -19,24 +23,38 @@ import neoterra.world.worldgen.structure.rule.StructureRule;
 @Mixin(Structure.class)
 public class MixinStructure {
 	@Unique
-	private static boolean neoterra$logged_isValidBiome;
+	private static boolean neoterra$logged_findValidGenerationPoint;
 
-	@Inject(
-		at = @At("HEAD"),
-		method = "isValidBiome",
-		cancellable = true
+	@WrapOperation(
+		method = "findValidGenerationPoint",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/levelgen/structure/Structure;isValidBiome(Lnet/minecraft/world/level/levelgen/structure/Structure$GenerationStub;Lnet/minecraft/world/level/levelgen/structure/Structure$GenerationContext;)Z"
+		)
 	)
-    private static void isValidBiome(GenerationStub generationStub, GenerationContext generationContext, CallbackInfoReturnable<Boolean> callback) {
-		RegistryAccess registry = generationContext.registryAccess();
-		RegistryLookup<StructureRule> structureRules = registry.lookupOrThrow(NTRegistries.STRUCTURE_RULE);
-		if(!neoterra$logged_isValidBiome) {
-			neoterra$logged_isValidBiome = true;
-			NTCommon.debug("MixinStructure.isValidBiome: first call evaluating {} StructureRules at {}", structureRules.listElements().count(), generationStub.position());
+	private boolean neoterra$applyStructureRules(GenerationStub stub, GenerationContext context, Operation<Boolean> original) {
+		if (!original.call(stub, context)) {
+			return false;
 		}
-		for(StructureRule structureRule : structureRules.listElements().map(Holder::value).toList()) {
-			if(!structureRule.test(generationContext.randomState(), generationStub.position())) {
-				callback.setReturnValue(false);
+
+		RegistryAccess registries = context.registryAccess();
+		RegistryLookup<StructureRule> structureRules = registries.lookupOrThrow(NTRegistries.STRUCTURE_RULE);
+		Structure self = (Structure) (Object) this;
+
+		if (!neoterra$logged_findValidGenerationPoint) {
+			neoterra$logged_findValidGenerationPoint = true;
+			NTCommon.debug("MixinStructure.findValidGenerationPoint: first call evaluating {} StructureRules at {}", structureRules.listElements().count(), stub.position());
+		}
+
+		for (StructureRule rule : structureRules.listElements().map(Holder::value).toList()) {
+			Optional<HolderSet<Structure>> applyTo = rule.structures();
+			if (applyTo.isPresent() && applyTo.get().stream().noneMatch(h -> h.value() == self)) {
+				continue;
+			}
+			if (!rule.test(context.randomState(), stub.position())) {
+				return false;
 			}
 		}
-    }
+		return true;
+	}
 }

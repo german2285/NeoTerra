@@ -1,8 +1,12 @@
 package neoterra.world.worldgen.structure.rule;
 
+import java.util.Optional;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.HolderSet;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import neoterra.NTCommon;
 import neoterra.platform.RegistryUtil;
 import neoterra.registries.NTBuiltInRegistries;
@@ -18,9 +22,9 @@ public class StructureRules {
 		register("cell_test", CellTest.CODEC);
 		NTCommon.debug("StructureRules.bootstrap: registered {} structure rule types in {} ms", registeredCount, System.currentTimeMillis() - t0);
 	}
-	
-	public static CellTest cellTest(float cutoff, Terrain... terrainTypeBlacklist) {
-		return new CellTest(cutoff, ImmutableSet.copyOf(terrainTypeBlacklist));
+
+	public static CellTest cellTest(HolderSet<Structure> structures, float cutoff, Terrain... terrainTypeBlacklist) {
+		return new CellTest(Optional.of(structures), cutoff, ImmutableSet.copyOf(terrainTypeBlacklist));
 	}
 
 	private static void register(String name, MapCodec<? extends StructureRule> value) {

@@ -1,5 +1,6 @@
 {
   "type": "neoterra:cell_test",
+  "structures": "#neoterra:apply_cell_test",
   "cutoff": 0.225,
   "terrain_type_blacklist": [
     "mountain_chain",

@@ -1,7 +1,9 @@
 package neoterra;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import net.minecraft.resources.ResourceLocation;
 import neoterra.data.worldgen.preset.settings.Preset;
@@ -29,6 +31,10 @@ public class NTCommon {
 	public static final Logger LOGGER = LogManager.getLogger("NeoTerra");
 
 	public static void bootstrap() {
+		if (Boolean.getBoolean("neoterra.debug")) {
+			Configurator.setLevel("NeoTerra", Level.DEBUG);
+			LOGGER.info("Debug logging enabled (-Dneoterra.debug=true)");
+		}
 		LOGGER.debug("Bootstrap starting");
 		NTBuiltInRegistries.bootstrap();
 		LOGGER.debug("  built-in registries ready");

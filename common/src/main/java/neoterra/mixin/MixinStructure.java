@@ -5,9 +5,8 @@ import java.util.Optional;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup.RegistryLookup;
@@ -25,17 +24,20 @@ public class MixinStructure {
 	@Unique
 	private static boolean neoterra$logged_findValidGenerationPoint;
 
-	@WrapOperation(
+	// `findValidGenerationPoint` calls `isValidBiome` from a synthetic Optional.filter lambda,
+	// not directly — so a WrapOperation on the call site can't be located. Inject at RETURN
+	// after Mojang's biome filter has already run, then drop the stub if any rule rejects it.
+	@Inject(
 		method = "findValidGenerationPoint",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/world/level/levelgen/structure/Structure;isValidBiome(Lnet/minecraft/world/level/levelgen/structure/Structure$GenerationStub;Lnet/minecraft/world/level/levelgen/structure/Structure$GenerationContext;)Z"
-		)
+		at = @At("RETURN"),
+		cancellable = true
 	)
-	private boolean neoterra$applyStructureRules(GenerationStub stub, GenerationContext context, Operation<Boolean> original) {
-		if (!original.call(stub, context)) {
-			return false;
+	private void neoterra$applyStructureRules(GenerationContext context, CallbackInfoReturnable<Optional<GenerationStub>> cir) {
+		Optional<GenerationStub> result = cir.getReturnValue();
+		if (result.isEmpty()) {
+			return;
 		}
+		GenerationStub stub = result.get();
 
 		RegistryAccess registries = context.registryAccess();
 		RegistryLookup<StructureRule> structureRules = registries.lookupOrThrow(NTRegistries.STRUCTURE_RULE);
@@ -52,9 +54,9 @@ public class MixinStructure {
 				continue;
 			}
 			if (!rule.test(context.randomState(), stub.position())) {
-				return false;
+				cir.setReturnValue(Optional.empty());
+				return;
 			}
 		}
-		return true;
 	}
 }

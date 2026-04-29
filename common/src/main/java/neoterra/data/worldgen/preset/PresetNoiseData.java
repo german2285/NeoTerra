@@ -12,10 +12,17 @@ import neoterra.world.worldgen.noise.module.Noises;
 public class PresetNoiseData {
 
 	public static void bootstrap(Preset preset, BootstrapContext<Noise> ctx) {
+		NTCommon.debug("PresetNoiseData.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
+		NTCommon.debug("PresetNoiseData.bootstrap: invoking PresetTerrainNoise.bootstrap");
 		PresetTerrainNoise.bootstrap(preset, ctx);
+		NTCommon.debug("PresetNoiseData.bootstrap: invoking PresetClimateNoise.bootstrap");
 		PresetClimateNoise.bootstrap(preset, ctx);
+		NTCommon.debug("PresetNoiseData.bootstrap: invoking PresetSurfaceNoise.bootstrap");
 		PresetSurfaceNoise.bootstrap(preset, ctx);
+		NTCommon.debug("PresetNoiseData.bootstrap: invoking PresetStrataNoise.bootstrap");
 		PresetStrataNoise.bootstrap(preset, ctx);
+		NTCommon.debug("PresetNoiseData.bootstrap: complete in {} ms", System.currentTimeMillis() - t0);
 	}
 	
 	public static Noise getNoise(HolderGetter<Noise> noiseLookup, ResourceKey<Noise> key) {

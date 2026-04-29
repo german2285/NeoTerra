@@ -59,6 +59,7 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	}
 	
 	protected void regenerate() {
+		NTCommon.debug("PresetEditorPage.regenerate: rebuilding preview for preset '{}'", this.preset.getName().getString());
 		this.preview.regenerate();
 	}
 	
@@ -98,20 +99,22 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	@Override
 	public void onClose() {
 		super.onClose();
-	
+
 		try {
+			NTCommon.debug("PresetEditorPage.onClose: saving preset '{}' and closing preview", this.preset.getName().getString());
 			this.preset.save();
 			this.preview.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void onDone() {
 		super.onDone();
-		
+
 		try {
+			NTCommon.debug("PresetEditorPage.onDone: applying preset '{}'", this.preset.getName().getString());
 			this.screen.applyPreset(this.preset);
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -22,6 +22,7 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource;
+import neoterra.NTCommon;
 import neoterra.world.worldgen.NTRandomState;
 
 @Mixin(ChunkMap.class)
@@ -35,7 +36,10 @@ public class MixinChunkMap {
 	)
 	public void ChunkMap(ServerLevel serverLevel, LevelStorageSource.LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager templateLoader, Executor executor, BlockableEventLoop<Runnable> eventLoop, LightChunkGetter lightChunkGetter, ChunkGenerator chunkGenerator, ChunkProgressListener chunkProgressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> dimensionStorage, int viewDistance, boolean syncChunkWrites, CallbackInfo callback) {
 		if((Object) this.randomState instanceof NTRandomState rtfRandomState) {
+			NTCommon.debug("MixinChunkMap.ChunkMap: initializing NTRandomState for level {}", serverLevel.dimension().location());
 			rtfRandomState.initialize(serverLevel.registryAccess());
+		} else {
+			NTCommon.debug("MixinChunkMap.ChunkMap: randomState is NOT NTRandomState for level {} (skipping init)", serverLevel.dimension().location());
 		}
 	}
 }

@@ -30,14 +30,17 @@ public class RegistryUtilImpl {
 //	}
 
 	public static <T> void register(Registry<T> registry, String name, T value) {
+		NTCommon.debug("Fabric RegistryUtilImpl.register: registry={}, name={}", registry.key().location(), name);
 		Registry.register(registry, NTCommon.location(name), value);
 	}
 
 	public static <T> Registry<T> createRegistry(ResourceKey<Registry<T>> key) {
+		NTCommon.debug("Fabric RegistryUtilImpl.createRegistry: key={}", key.location());
 		return FabricRegistryBuilder.createSimple(key).buildAndRegister();
 	}
 
 	public static <T> void createDataRegistry(ResourceKey<Registry<T>> key, Codec<T> codec, boolean synced) {
+		NTCommon.debug("Fabric RegistryUtilImpl.createDataRegistry: key={}, synced={}", key.location(), synced);
 		if(synced) {
 			DynamicRegistries.registerSynced(key, codec); // TODO what does SyncOption.SKIP_WHEN_EMPTY do?
 		} else {

@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.RegistryDataLoader;
+import neoterra.NTCommon;
 import neoterra.platform.BiomeModifierPlatform;
 import neoterra.platform.RegistryUtil;
 import neoterra.data.worldgen.preset.PresetBiomeData;
@@ -49,16 +50,19 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 	}
 
 	public HolderLookup.Provider buildPatch(RegistryAccess registries) {
+		NTCommon.debug("Preset.buildPatch: starting");
+		long t0 = System.currentTimeMillis();
 		RegistrySetBuilder builder = new RegistrySetBuilder();
 		this.addPatch(builder, NTRegistries.PRESET, (preset, ctx) -> ctx.register(KEY, preset));
 		this.addPatch(builder, NTRegistries.NOISE, PresetNoiseData::bootstrap);
+		NTCommon.debug("Preset.buildPatch: invoking BiomeModifierPlatform.addPatches");
 		BiomeModifierPlatform.addPatches(builder, this);
 		this.addPatch(builder, NTRegistries.STRUCTURE_RULE, PresetStructureRuleData::bootstrap);
 		this.addPatch(builder, Registries.CONFIGURED_FEATURE, (preset, ctx) -> {
 			PresetConfiguredFeatures.bootstrap(preset, ctx);
 		});
 		this.addPatch(builder, Registries.CONFIGURED_CARVER, (preset, ctx) -> {
-			PresetConfiguredCarvers.bootstrap(preset, ctx);	
+			PresetConfiguredCarvers.bootstrap(preset, ctx);
 		});
 		this.addPatch(builder, Registries.PLACED_FEATURE, PresetPlacedFeatures::bootstrap);
 		this.addPatch(builder, Registries.BIOME, PresetBiomeData::bootstrap);
@@ -74,12 +78,17 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 		factory.addCodec(NTRegistries.NOISE, Noise.DIRECT_CODEC);
 		factory.addCodec(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC);
 		factory.addCodec(NTRegistries.PRESET, Preset.DIRECT_CODEC);
-		return builder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), registries, factory).patches();
+		HolderLookup.Provider result = builder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), registries, factory).patches();
+		NTCommon.debug("Preset.buildPatch: complete in {} ms", System.currentTimeMillis() - t0);
+		return result;
 	}
-	
+
 	private <T> void addPatch(RegistrySetBuilder builder, ResourceKey<? extends Registry<T>> key, Patch<T> patch) {
     	builder.add(key, (ctx) -> {
+    		NTCommon.debug("Preset.addPatch[{}]: invoking patch", key.location());
+    		long t = System.currentTimeMillis();
     		patch.apply(this, ctx);
+    		NTCommon.debug("Preset.addPatch[{}]: patch complete in {} ms", key.location(), System.currentTimeMillis() - t);
     	});
     }
     

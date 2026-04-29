@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
+import neoterra.NTCommon;
 import neoterra.platform.RegistryUtil;
 import neoterra.registries.NTBuiltInRegistries;
 import neoterra.world.worldgen.noise.domain.Domain;
@@ -28,9 +29,14 @@ public class Noises {
         return Either.right(noise);
     });
     
+	private static int registeredCount = 0;
+
 	public static void bootstrap() {
+		NTCommon.debug("Noises.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
+		registeredCount = 0;
 		register("constant", Constant.CODEC);
-		register("sin", Sin.CODEC); 
+		register("sin", Sin.CODEC);
 		register("white", White.CODEC);
 		register("perlin", Perlin.CODEC);
 		register("perlin2", Perlin2.CODEC);
@@ -68,9 +74,10 @@ public class Noises {
 		register("erosion", Erosion.CODEC);
 		register("linear_spline", LinearSpline.CODEC);
 		register("cache", Cache2d.CODEC);
-		
+
 		register("legacy_temperature", LegacyTemperature.CODEC);
 		register("legacy_moisture", LegacyMoisture.CODEC);
+		NTCommon.debug("Noises.bootstrap: registered {} noise types in {} ms", registeredCount, System.currentTimeMillis() - t0);
 	}
 
 	public static Noise constant(float value) {
@@ -411,6 +418,7 @@ public class Noises {
  
 	private static void register(String name, MapCodec<? extends Noise> value) {
 		RegistryUtil.register(NTBuiltInRegistries.NOISE_TYPE, name, value);
+		registeredCount++;
 	}
 	
 	public record HolderHolder(Holder<Noise> holder) implements Noise {

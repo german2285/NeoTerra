@@ -34,6 +34,7 @@ class MixinSurfaceSystem {
 		method = "<init>"
 	)
     public void SurfaceSystem(RandomState randomState, BlockState blockState, int i, PositionalRandomFactory positionalRandomFactory, CallbackInfo callback) {
+    	NTCommon.debug("MixinSurfaceSystem.SurfaceSystem: initializing strata map (defaultBlock={})", blockState);
     	this.randomState = randomState;
     	this.strata = new ConcurrentHashMap<>();
 	}

@@ -20,6 +20,7 @@ import neoterra.world.worldgen.surface.rule.StrataRule.Strata;
 public class PresetSurfaceRuleData {
     
     public static SurfaceRules.RuleSource overworld(Preset preset, HolderGetter<DensityFunction> densityFunctions, HolderGetter<Noise> noise) {
+		NTCommon.debug("PresetSurfaceRuleData.overworld: building surface rule sequence (vanilla overworld + strata)");
 		return SurfaceRules.sequence(
 				SurfaceRuleData.overworld(),
 				makeStrataRule(noise)

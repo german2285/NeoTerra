@@ -28,11 +28,14 @@ public final class RegistryUtilImpl {
 	private static final Map<ResourceKey<?>, DeferredRegister<?>> REGISTERS = new ConcurrentHashMap<>();
 
 public static void register(IEventBus bus) {
+	NTCommon.debug("NeoForge RegistryUtilImpl.register: attaching {} built-in registries, {} data registries, {} deferred registers to event bus", BUILTIN_REGISTRIES.size(), DATA_REGISTRIES.size(), REGISTERS.size());
 	bus.addListener((NewRegistryEvent event) -> {
+		NTCommon.debug("NeoForge RegistryUtilImpl: NewRegistryEvent fired -> registering {} built-in registries", BUILTIN_REGISTRIES.size());
 		BUILTIN_REGISTRIES.forEach(event::register);
 	});
 
 	bus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
+		NTCommon.debug("NeoForge RegistryUtilImpl: DataPackRegistryEvent.NewRegistry fired -> registering {} data registries", DATA_REGISTRIES.size());
 		DATA_REGISTRIES.forEach((registry) -> registry.register(event));
 	});
 
@@ -40,17 +43,20 @@ public static void register(IEventBus bus) {
 }
 
 	public static <T> void register(Registry<T> registry, String name, T value) {
+		NTCommon.debug("NeoForge RegistryUtilImpl.register: registry={}, name={}", registry.key().location(), name);
 		DeferredRegister<T> deferredRegistry = getRegister(registry.key());
 		deferredRegistry.register(name, () -> value);
 	}
 
 	public static <T> Registry<T> createRegistry(ResourceKey<Registry<T>> key) {
+		NTCommon.debug("NeoForge RegistryUtilImpl.createRegistry: key={}", key.location());
 		Registry<T> registry = new RegistryBuilder<>(key).create();
 		BUILTIN_REGISTRIES.add(registry);
 		return registry;
 	}
 
 	public static <T> void createDataRegistry(ResourceKey<Registry<T>> key, Codec<T> codec, boolean synced) {
+		NTCommon.debug("NeoForge RegistryUtilImpl.createDataRegistry: key={}, synced={}", key.location(), synced);
 		DATA_REGISTRIES.add(new DataRegistry<>(key, codec, synced));
 	}
 

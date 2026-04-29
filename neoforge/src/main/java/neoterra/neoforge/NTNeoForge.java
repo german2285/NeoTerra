@@ -46,11 +46,13 @@ public class NTNeoForge {
     }
 
     private static void gatherData(GatherDataEvent event) {
+    	NTCommon.debug("NeoForge gatherData: starting");
     	boolean includeClient = event.includeClient();
     	DataGenerator generator = event.getGenerator();
     	PackOutput output = generator.getPackOutput();
 
     	generator.addProvider(includeClient, new NTLanguageProvider.EnglishUS(output));
     	generator.addProvider(includeClient, PackMetadataGenerator.forFeaturePack(output, Component.translatable(NTTranslationKeys.METADATA_DESCRIPTION)));
+    	NTCommon.debug("NeoForge gatherData: registered LanguageProvider and PackMetadataGenerator (includeClient={})", includeClient);
     }
 }

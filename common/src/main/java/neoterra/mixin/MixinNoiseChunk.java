@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.NoiseRouter;
 import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.minecraft.world.level.levelgen.RandomState;
+import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.settings.Preset;
 import neoterra.world.worldgen.GeneratorContext;
 import neoterra.world.worldgen.NTRandomState;
@@ -28,6 +30,12 @@ import neoterra.world.worldgen.densityfunction.tile.Tile;
 
 @Mixin(NoiseChunk.class)
 class MixinNoiseChunk {
+	@Unique
+	private static boolean neoterra$logged_NoiseChunk;
+	@Unique
+	private static boolean neoterra$logged_modifyFluidPicker;
+	@Unique
+	private static boolean neoterra$logged_wrapNew;
 	private RandomState randomState;
 	private int chunkX, chunkZ;
 	@Nullable
@@ -57,6 +65,10 @@ class MixinNoiseChunk {
 		GeneratorContext generatorContext;
 		if((Object) randomState instanceof NTRandomState rtfRandomState && cellCountXZ > 1 && (generatorContext = rtfRandomState.generatorContext()) != null) {
 			this.chunk = generatorContext.cache.provideAtChunk(this.chunkX, this.chunkZ).getChunkReader(this.chunkX, this.chunkZ);
+			if(!neoterra$logged_NoiseChunk) {
+				neoterra$logged_NoiseChunk = true;
+				NTCommon.debug("MixinNoiseChunk.NoiseChunk: first call attaching tile cache for chunk ({}, {}) with cellCountXZ={}", this.chunkX, this.chunkZ, cellCountXZ);
+			}
 		}
 		this.cache2d = new CellSampler.Cache2d();
 		return randomState.router();
@@ -79,6 +91,10 @@ class MixinNoiseChunk {
 		        Aquifer.FluidStatus lava = new Aquifer.FluidStatus(lavaLevel, Blocks.LAVA.defaultBlockState());
 		        int seaLevel = noiseGeneratorSettings.seaLevel();
 		        Aquifer.FluidStatus defaultFluid = new Aquifer.FluidStatus(seaLevel, noiseGeneratorSettings.defaultFluid());
+				if(!neoterra$logged_modifyFluidPicker) {
+					neoterra$logged_modifyFluidPicker = true;
+					NTCommon.debug("MixinNoiseChunk.modifyFluidPicker: first call replacing FluidPicker (lavaLevel={}, seaLevel={})", lavaLevel, seaLevel);
+				}
 		        return (x, y, z) -> {
 		            if (y < Math.min(lavaLevel, seaLevel)) {
 		                return lava;
@@ -97,6 +113,10 @@ class MixinNoiseChunk {
 	)
 	private void wrapNew(DensityFunction function, CallbackInfoReturnable<DensityFunction> callback) {
 		if((Object) this.randomState instanceof NTRandomState randomState && function instanceof CellSampler mapped) {
+			if(!neoterra$logged_wrapNew) {
+				neoterra$logged_wrapNew = true;
+				NTCommon.debug("MixinNoiseChunk.wrapNew: first call wrapping CellSampler with CacheChunk for chunk ({}, {})", this.chunkX, this.chunkZ);
+			}
 			callback.setReturnValue(mapped.new CacheChunk(this.chunk, this.cache2d, this.chunkX, this.chunkZ));
 		}
 	}

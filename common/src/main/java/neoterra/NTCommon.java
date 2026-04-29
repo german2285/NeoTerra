@@ -60,31 +60,44 @@ public class NTCommon {
 			Configurator.setLevel("NeoTerra", Level.DEBUG);
 			LOGGER.info("Debug logging enabled (-Dneoterra.debug=true)");
 		}
+		long bootstrapStart = System.currentTimeMillis();
 		debug("Bootstrap starting");
+
+		long t = System.currentTimeMillis();
 		NTBuiltInRegistries.bootstrap();
-		debug("  built-in registries ready");
+		debug("  built-in registries ready ({} ms)", System.currentTimeMillis() - t);
+
+		t = System.currentTimeMillis();
 		TemplatePlacements.bootstrap();
 		TemplateDecorators.bootstrap();
 		NTChanceModifiers.bootstrap();
 		NTPlacementModifiers.bootstrap();
 		NTDensityFunctions.bootstrap();
-		debug("  feature subsystems registered (templates, chance, placement, density functions)");
+		debug("  feature subsystems registered (templates, chance, placement, density functions) ({} ms)", System.currentTimeMillis() - t);
+
+		t = System.currentTimeMillis();
 		Noises.bootstrap();
 		Domains.bootstrap();
 		CurveFunctions.bootstrap();
-		debug("  noise subsystems registered (noises, domains, curves)");
+		debug("  noise subsystems registered (noises, domains, curves) ({} ms)", System.currentTimeMillis() - t);
+
+		t = System.currentTimeMillis();
 		NTFeatures.bootstrap();
 		NTHeightProviderTypes.bootstrap();
 		NTFloatProviderTypes.bootstrap();
 		NTSurfaceRules.bootstrap();
 		StructureRules.bootstrap();
-		debug("  features, providers, surface and structure rules registered");
+		debug("  features, providers, surface and structure rules registered ({} ms)", System.currentTimeMillis() - t);
 
+		t = System.currentTimeMillis();
 		RegistryUtil.createDataRegistry(NTRegistries.NOISE, Noise.DIRECT_CODEC, false);
+		debug("  created data registry NOISE");
 		RegistryUtil.createDataRegistry(NTRegistries.PRESET, Preset.DIRECT_CODEC, false);
+		debug("  created data registry PRESET");
 		RegistryUtil.createDataRegistry(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC, false);
-		debug("  data registries created (NOISE, PRESET, STRUCTURE_RULE)");
-		debug("Bootstrap complete");
+		debug("  created data registry STRUCTURE_RULE");
+		debug("  data registries created (NOISE, PRESET, STRUCTURE_RULE) ({} ms)", System.currentTimeMillis() - t);
+		debug("Bootstrap complete (total {} ms)", System.currentTimeMillis() - bootstrapStart);
 	}
 
 	public static ResourceLocation location(String name) {

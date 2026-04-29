@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
+import neoterra.NTCommon;
 import neoterra.platform.RegistryUtil;
 import neoterra.world.worldgen.feature.placement.poisson.FastPoissonModifier;
 
@@ -18,6 +19,7 @@ public class NTPlacementModifiers {
 	public static final PlacementModifierType<LegacyCountExtraModifier> LEGACY_COUNT_EXTRA = register("legacy_count_extra", LegacyCountExtraModifier.CODEC);
 
     public static void bootstrap() {
+        NTCommon.debug("NTPlacementModifiers.bootstrap: starting (3 placement modifier types registered via static init: blacklist_dimension, fast_poission, legacy_count_extra)");
     }
     
     @SafeVarargs

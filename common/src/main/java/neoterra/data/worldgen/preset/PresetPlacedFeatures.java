@@ -85,6 +85,8 @@ public class PresetPlacedFeatures {
 	public static final ResourceKey<PlacedFeature> JUNGLE_EDGE_TREES = createKey("jungle_edge_trees");
     
 	public static void bootstrap(Preset preset, BootstrapContext<PlacedFeature> ctx) {
+		NTCommon.debug("PresetPlacedFeatures.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
 		HolderGetter<ConfiguredFeature<?, ?>> features = ctx.lookup(Registries.CONFIGURED_FEATURE);
 		MiscellaneousSettings miscellaneous = preset.miscellaneous();
 
@@ -181,6 +183,8 @@ public class PresetPlacedFeatures {
 //			TODO shattered savanna
 //        	PlacementUtils.register(ctx, VegetationPlacements.TREES_WINDSWEPT_SAVANNA, features.getOrThrow(VegetationFeatures.TREES_SAVANNA), NTPlacementModifiers.disabled());
         }
+		NTCommon.debug("PresetPlacedFeatures.bootstrap: complete in {} ms (customBiomeFeatures={}, erosionDecorator={}, naturalSnowDecorator={}, smoothLayerDecorator={}, strataDecorator={}, vanillaSprings={}, vanillaLavaSprings={}, vanillaLavaLakes={})",
+			System.currentTimeMillis() - t0, miscellaneous.customBiomeFeatures, miscellaneous.erosionDecorator, miscellaneous.naturalSnowDecorator, miscellaneous.smoothLayerDecorator, miscellaneous.strataDecorator, miscellaneous.vanillaSprings, miscellaneous.vanillaLavaSprings, miscellaneous.vanillaLavaLakes);
 	}
 	
     public static List<PlacementModifier> worldSurfaceSquaredWithCount(int i) {

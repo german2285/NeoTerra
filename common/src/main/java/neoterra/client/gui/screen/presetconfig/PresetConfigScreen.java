@@ -54,33 +54,39 @@ public class PresetConfigScreen extends LinkedPageScreen {
 		return this.parent.getUiState().getSettings();
 	}
 
-	public void applyPreset(PresetEntry preset) throws IOException {		
+	public void applyPreset(PresetEntry preset) throws IOException {
+		NTCommon.debug("PresetConfigScreen.applyPreset: applying preset {}", preset.getName().getString());
 		Pair<Path, PackRepository> path = this.parent.getDataPackSelectionSettings(this.parent.getUiState().getSettings().dataConfiguration());
 		Path exportPath = path.getFirst().resolve("neoterra-preset.zip");
 		this.exportAsDatapack(exportPath, preset);
 		PackRepository repository = path.getSecond();
 		repository.reload();
 		if(repository.addPack("file/" + exportPath.getFileName())) {
+			NTCommon.debug("PresetConfigScreen.applyPreset: pack added to repository, calling tryApplyNewDataPacks");
 			this.parent.tryApplyNewDataPacks(repository, false, (data) -> {
 			});
+		} else {
+			NTCommon.debug("PresetConfigScreen.applyPreset: repository.addPack returned false (pack not added)");
 		}
 	}
-	
+
 	public void exportAsDatapack(Path outputPath, PresetEntry presetEntry) throws IOException {
+		NTCommon.debug("PresetConfigScreen.exportAsDatapack: starting export of preset '{}' to {}", presetEntry.getName().getString(), outputPath);
+		long t0 = System.currentTimeMillis();
 		Path datagenPath = Files.createTempDirectory("datagen-target-");
 		Path datagenOutputPath = datagenPath.resolve("output");
-		
+
 		RegistryAccess registryAccess = this.getSettings().worldgenLoadContext();
 
 		Preset preset = presetEntry.getPreset();
 		Component presetName = presetEntry.getName();
-		
+
 		DataGenerator dataGenerator = Datapacks.makePreset(preset, registryAccess, datagenPath, datagenOutputPath, presetName.getString());
 		dataGenerator.run();
 		copyToZip(datagenOutputPath, outputPath);
 		PathUtils.deleteDirectory(datagenPath);
-		
-		NTCommon.debug("Exported datapack to {}", outputPath);
+
+		NTCommon.debug("Exported datapack to {} in {} ms", outputPath, System.currentTimeMillis() - t0);
 	}
 	
 	private static void copyToZip(Path input, Path output) {

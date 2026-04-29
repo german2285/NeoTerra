@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -38,6 +39,12 @@ import neoterra.world.worldgen.noise.module.Noises;
 @Mixin(RandomState.class)
 @Implements(@Interface(iface = NTRandomState.class, prefix = "neoterra$NTRandomState$"))
 class MixinRandomState {
+	@Unique
+	private static boolean neoterra$logged_RandomState;
+	@Unique
+	private static boolean neoterra$logged_visitor_noiseMarker;
+	@Unique
+	private static boolean neoterra$logged_visitor_cellMarker;
 	private DensityFunction.Visitor densityFunctionWrapper;
 	@Shadow
 	@Final
@@ -62,15 +69,27 @@ class MixinRandomState {
 	)
 	private NoiseRouter RandomState(NoiseRouter router, DensityFunction.Visitor visitor, NoiseGeneratorSettings noiseGeneratorSettings, HolderGetter<NormalNoise.NoiseParameters> params, final long seed) {
 		this.seed = seed;
+		if(!neoterra$logged_RandomState) {
+			neoterra$logged_RandomState = true;
+			NTCommon.debug("MixinRandomState.RandomState: first call installing density wrapper (seed={})", seed);
+		}
 		this.densityFunctionWrapper = new DensityFunction.Visitor() {
-			
+
 			@Override
 			public DensityFunction apply(DensityFunction function) {
 				if(function instanceof NoiseFunction.Marker marker) {
+					if(!neoterra$logged_visitor_noiseMarker) {
+						neoterra$logged_visitor_noiseMarker = true;
+						NTCommon.debug("MixinRandomState density wrapper: first NoiseFunction.Marker rewrite");
+					}
 					return new NoiseFunction(marker.noise(), (int) seed);
 				}
 				if(function instanceof CellSampler.Marker marker) {
 					MixinRandomState.this.hasContext |= true;
+					if(!neoterra$logged_visitor_cellMarker) {
+						neoterra$logged_visitor_cellMarker = true;
+						NTCommon.debug("MixinRandomState density wrapper: first CellSampler.Marker rewrite, marking hasContext=true");
+					}
 					return new CellSampler(Suppliers.memoize(() -> MixinRandomState.this.generatorContext.lookup), marker.field());
 				}
 				return visitor.apply(function);

@@ -21,6 +21,7 @@ import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.storage.LevelStorageSource;
+import neoterra.NTCommon;
 import neoterra.server.NTMinecraftServer;
 import neoterra.world.worldgen.feature.template.template.FeatureTemplateManager;
 
@@ -34,6 +35,7 @@ public class MixinMinecraftServer {
 		at = @At("TAIL")
 	)
 	public void MinecraftServer(Thread thread, LevelStorageSource.LevelStorageAccess arg2, PackRepository arg22, WorldStem arg3, Proxy proxy, DataFixer dataFixer, Services arg4, ChunkProgressListenerFactory arg5, CallbackInfo callback) {
+		NTCommon.debug("NeoForge MixinMinecraftServer.MinecraftServer: creating FeatureTemplateManager");
 		this.templateManager = new FeatureTemplateManager(this.getResourceManager());
 	}
 	
@@ -47,6 +49,7 @@ public class MixinMinecraftServer {
 		at = @At("TAIL")
 	)
 	private void lambda$reloadResources$26(Collection collection, MinecraftServer.ReloadableResources arg, CallbackInfo callback) {
+		NTCommon.debug("NeoForge MixinMinecraftServer.lambda$reloadResources$26: reloading FeatureTemplateManager");
 		this.templateManager.onReload(this.getResourceManager());
 	}
 

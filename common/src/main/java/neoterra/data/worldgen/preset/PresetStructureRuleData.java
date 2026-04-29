@@ -11,9 +11,11 @@ import neoterra.world.worldgen.structure.rule.StructureRules;
 
 public class PresetStructureRuleData {
 	public static final ResourceKey<StructureRule> CELL_TEST = createKey("cell_test");
-	
+
 	public static void bootstrap(Preset preset, BootstrapContext<StructureRule> ctx) {
+		NTCommon.debug("PresetStructureRuleData.bootstrap: starting");
 		ctx.register(CELL_TEST, StructureRules.cellTest(0.225F, TerrainType.MOUNTAIN_CHAIN, TerrainType.MOUNTAINS_1, TerrainType.MOUNTAINS_2, TerrainType.MOUNTAINS_3));
+		NTCommon.debug("PresetStructureRuleData.bootstrap: registered 1 structure rule (cell_test)");
 	}
 	
 	private static ResourceKey<StructureRule> createKey(String name) {

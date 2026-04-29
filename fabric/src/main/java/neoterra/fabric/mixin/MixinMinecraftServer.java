@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import neoterra.NTCommon;
 import neoterra.server.NTMinecraftServer;
 import neoterra.world.worldgen.feature.template.template.FeatureTemplateManager;
 
@@ -23,6 +24,7 @@ public class MixinMinecraftServer {
 		at = @At("TAIL")
 	)
 	public void MinecraftServer(CallbackInfo callback) {
+		NTCommon.debug("Fabric MixinMinecraftServer.MinecraftServer: creating FeatureTemplateManager");
 		this.templateManager = new FeatureTemplateManager(this.getResourceManager());
 	}
 	
@@ -37,6 +39,7 @@ public class MixinMinecraftServer {
 		remap = false
 	)
 	private void method_29440(CallbackInfo callback) {
+		NTCommon.debug("Fabric MixinMinecraftServer.method_29440: reloading FeatureTemplateManager");
 		this.templateManager.onReload(this.getResourceManager());
 	}
 

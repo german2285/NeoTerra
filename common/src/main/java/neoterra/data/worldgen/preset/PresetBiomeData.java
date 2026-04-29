@@ -33,13 +33,16 @@ public final class PresetBiomeData {
     public static final ResourceKey<Biome> WARM_BEACH = createKey("warm_beach");
 	
 	public static void bootstrap(Preset preset, BootstrapContext<Biome> ctx) {
+		NTCommon.debug("PresetBiomeData.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
 		MiscellaneousSettings miscellaneousSettings = preset.miscellaneous();
-		
+
 		if(miscellaneousSettings.customBiomeFeatures) {
 			HolderGetter<PlacedFeature> placedFeatures = ctx.lookup(Registries.PLACED_FEATURE);
 			HolderGetter<ConfiguredWorldCarver<?>> configuredWorldCarvers = ctx.lookup(Registries.CONFIGURED_CARVER);
-
+			NTCommon.debug("PresetBiomeData.bootstrap: customBiomeFeatures=true (no biomes are currently registered yet from this method)");
 		}
+		NTCommon.debug("PresetBiomeData.bootstrap: complete in {} ms (customBiomeFeatures={})", System.currentTimeMillis() - t0, miscellaneousSettings.customBiomeFeatures);
 	}
 	
     private static ResourceKey<Biome> createKey(String string) {

@@ -3,19 +3,25 @@ package neoterra.world.worldgen.noise.domain;
 import com.mojang.serialization.Codec;
 
 import com.mojang.serialization.MapCodec;
+import neoterra.NTCommon;
 import neoterra.platform.RegistryUtil;
 import neoterra.registries.NTBuiltInRegistries;
 import neoterra.world.worldgen.noise.module.Noise;
 import neoterra.world.worldgen.noise.module.Noises;
 
 public class Domains {
+	private static int registeredCount = 0;
 
 	public static void bootstrap() {
+		NTCommon.debug("Domains.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
+		registeredCount = 0;
 		register("domain", DomainWarp.CODEC);
 		register("direction", DirectionWarp.CODEC);
 		register("compound", CompoundWarp.CODEC);
 		register("add", AddWarp.CODEC);
 		register("direct", DirectWarp.CODEC);
+		NTCommon.debug("Domains.bootstrap: registered {} domain types in {} ms", registeredCount, System.currentTimeMillis() - t0);
 	}
 
 	public static Domain domainPerlin(int seed, int scale, int octaves, float strength) {
@@ -56,5 +62,6 @@ public class Domains {
 	
 	private static void register(String name, MapCodec<? extends Domain> value) {
 		RegistryUtil.register(NTBuiltInRegistries.DOMAIN_TYPE, name, value);
+		registeredCount++;
 	}
 }

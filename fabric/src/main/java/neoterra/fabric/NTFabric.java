@@ -26,9 +26,11 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 	//TODO merge this with forge's datagen since they're the same now
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+		NTCommon.debug("Fabric entry point: onInitializeDataGenerator");
 		Pack pack = fabricDataGenerator.createPack();
 
 		pack.addProvider((FabricDataOutput output) -> new NTLanguageProvider.EnglishUS(output));
 		pack.addProvider((FabricDataOutput output) -> PackMetadataGenerator.forFeaturePack(output, Component.translatable(NTTranslationKeys.METADATA_DESCRIPTION)));
+		NTCommon.debug("Fabric onInitializeDataGenerator: registered LanguageProvider and PackMetadataGenerator");
 	}
 }

@@ -61,6 +61,15 @@ public class PresetBiomeModifierData {
 		NTCommon.debug("collectPatches: customBiomeFeatures={}, erosionDecorator={}, naturalSnowDecorator={}, smoothLayerDecorator={}",
 			miscellaneous.customBiomeFeatures, miscellaneous.erosionDecorator,
 			miscellaneous.naturalSnowDecorator, miscellaneous.smoothLayerDecorator);
+		if(!miscellaneous.customBiomeFeatures) {
+			NTCommon.debug("collectPatches: customBiomeFeatures=false -> skipping {} replace patches (plains/forest/flower_forest/birch/dark_forest/savanna/swamp/meadow/fir/windswept_hills_fir/pine/spruce/spruce_tundra/redwood/jungle/jungle_edge/badlands/wooded_badlands trees) and {} add patches (marsh/plains/steppe/cold_steppe/taiga_scrub bush, forest/birch_forest grass)", 18, 7);
+		}
+		if(!miscellaneous.erosionDecorator) {
+			NTCommon.debug("collectPatches: erosionDecorator=false -> skipping ADD_EROSION patch");
+		}
+		if(!(miscellaneous.naturalSnowDecorator || miscellaneous.smoothLayerDecorator)) {
+			NTCommon.debug("collectPatches: naturalSnowDecorator=false && smoothLayerDecorator=false -> skipping ADD_SNOW_PROCESSING patch");
+		}
 
 		HolderSet<Biome> swamps = HolderSet.direct(biomes.getOrThrow(Biomes.SWAMP));
 		HolderSet<Biome> plains = HolderSet.direct(biomes.getOrThrow(Biomes.RIVER), biomes.getOrThrow(Biomes.PLAINS), biomes.getOrThrow(Biomes.SUNFLOWER_PLAINS));

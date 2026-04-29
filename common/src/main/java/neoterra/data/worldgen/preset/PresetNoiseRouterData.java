@@ -32,6 +32,8 @@ public class PresetNoiseRouterData {
 	private static final float UNIT = 1.0F / SCALER;
 	
     public static void bootstrap(Preset preset, BootstrapContext<DensityFunction> ctx) {
+        NTCommon.debug("PresetNoiseRouterData.bootstrap: starting");
+        long t0 = System.currentTimeMillis();
         HolderGetter<DensityFunction> densityFunctions = ctx.lookup(Registries.DENSITY_FUNCTION);
         HolderGetter<NormalNoise.NoiseParameters> noiseParams = ctx.lookup(Registries.NOISE);
         
@@ -60,6 +62,8 @@ public class PresetNoiseRouterData {
         ctx.register(GRADIENT, NTDensityFunctions.cell(CellSampler.Field.GRADIENT));
         ctx.register(HEIGHT_EROSION, NTDensityFunctions.cell(CellSampler.Field.HEIGHT_EROSION));
         ctx.register(SEDIMENT, NTDensityFunctions.cell(CellSampler.Field.SEDIMENT));
+        NTCommon.debug("PresetNoiseRouterData.bootstrap: registered density functions in {} ms (worldDepth={}, worldHeight={}, noodleCaveProbability={}, entranceCaveProbability={}, spaghettiCaveProbability={})",
+        	System.currentTimeMillis() - t0, worldDepth, worldHeight, caveSettings.noodleCaveProbability, caveSettings.entranceCaveProbability, caveSettings.spaghettiCaveProbability);
     }
     
     protected static NoiseRouter overworld(Preset preset, HolderGetter<DensityFunction> densityFunctions, HolderGetter<NormalNoise.NoiseParameters> noiseParams, HolderGetter<Noise> noises) {

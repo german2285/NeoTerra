@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.Util;
+import neoterra.NTCommon;
 import neoterra.concurrent.ThreadPools;
 import neoterra.concurrent.cache.Cache;
 
@@ -17,6 +18,7 @@ public class MixinUtil {
 
 	@Inject(method = "shutdownExecutors()V", at = @At("TAIL"))
 	private static void shutdownExecutors(CallbackInfo callback) {
+		NTCommon.debug("MixinUtil.shutdownExecutors: shutting down ThreadPools.WORLD_GEN and Cache.SCHEDULER");
 		shutdownExecutor(ThreadPools.WORLD_GEN);
 		shutdownExecutor(Cache.SCHEDULER);
 	}

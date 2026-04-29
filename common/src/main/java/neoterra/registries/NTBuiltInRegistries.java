@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
+import neoterra.NTCommon;
 import neoterra.platform.RegistryUtil;
 import neoterra.world.worldgen.feature.chance.ChanceModifier;
 import neoterra.world.worldgen.feature.template.decorator.TemplateDecorator;
@@ -23,5 +24,6 @@ public class NTBuiltInRegistries {
 	public static final Registry<MapCodec<? extends StructureRule>> STRUCTURE_RULE_TYPE = RegistryUtil.createRegistry(NTRegistries.STRUCTURE_RULE_TYPE);
 
 	public static void bootstrap() {
+		NTCommon.debug("NTBuiltInRegistries.bootstrap: starting (7 type registries created via static init: NOISE_TYPE, DOMAIN_TYPE, CURVE_FUNCTION_TYPE, CHANCE_MODIFIER_TYPE, TEMPLATE_PLACEMENT_TYPE, TEMPLATE_DECORATOR_TYPE, STRUCTURE_RULE_TYPE)");
 	}
 }

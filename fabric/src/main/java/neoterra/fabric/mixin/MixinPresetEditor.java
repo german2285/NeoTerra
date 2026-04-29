@@ -32,11 +32,13 @@ interface MixinPresetEditor {
 		remap = false
 	)
 	private static Map<Object, Object> of(Object k1, Object v1, Object k2, Object v2) {
+		NTCommon.debug("Fabric MixinPresetEditor.of: replacing immutable PresetEditor map with mutable HashMap to inject neoterra:default editor");
 		Map<Object, Object> map = new HashMap<>();
 		map.put(k1, v1);
 		map.put(k2, v2);
 		ResourceKey<WorldPreset> ntDefault = ResourceKey.create(Registries.WORLD_PRESET, NTCommon.location("default"));
 		map.put(Optional.of(ntDefault), (PresetEditor) (screen, ctx) -> new PresetConfigScreen(screen));
+		NTCommon.debug("Fabric MixinPresetEditor.of: registered neoterra:default editor (total {} entries)", map.size());
 		return map;
     }
 }

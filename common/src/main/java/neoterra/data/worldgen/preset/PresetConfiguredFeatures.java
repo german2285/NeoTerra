@@ -105,6 +105,8 @@ public class PresetConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_EDGE_TREES = createKey("jungle_edge_trees");
 	
 	public static void bootstrap(Preset preset, BootstrapContext<ConfiguredFeature<?, ?>> ctx) {
+		NTCommon.debug("PresetConfiguredFeatures.bootstrap: starting");
+		long t0 = System.currentTimeMillis();
 		MiscellaneousSettings miscellaneous = preset.miscellaneous();
 		SurfaceSettings surface = preset.surface();
 		SurfaceSettings.Erosion erosion = surface.erosion();
@@ -265,6 +267,8 @@ public class PresetConfiguredFeatures {
 	        FeatureUtils.register(ctx, MiscOverworldFeatures.DISK_GRAVEL, NTFeatures.DISK, new DiskConfiguration(RuleBasedBlockStateProvider.simple(Blocks.GRAVEL), BlockPredicate.matchesBlocks(List.of(Blocks.DIRT, Blocks.GRASS_BLOCK)), UniformInt.of(2, 5), 2));
 	        FeatureUtils.register(ctx, MiscOverworldFeatures.DISK_SAND, NTFeatures.DISK, new DiskConfiguration(new RuleBasedBlockStateProvider(BlockStateProvider.simple(Blocks.SAND), List.of(new RuleBasedBlockStateProvider.Rule(BlockPredicate.matchesBlocks(Direction.DOWN.getNormal(), Blocks.AIR), BlockStateProvider.simple(Blocks.SANDSTONE)))), BlockPredicate.matchesBlocks(List.of(Blocks.DIRT, Blocks.GRASS_BLOCK)), UniformInt.of(2, 6), 2));
 	    }
+		NTCommon.debug("PresetConfiguredFeatures.bootstrap: complete in {} ms (customBiomeFeatures={}, erosionDecorator={}, naturalSnowDecorator={}, smoothLayerDecorator={})",
+			System.currentTimeMillis() - t0, miscellaneous.customBiomeFeatures, miscellaneous.erosionDecorator, miscellaneous.naturalSnowDecorator, miscellaneous.smoothLayerDecorator);
 	}
 
 	private static BushFeature.Config makeSmallBush(Block log, Block leaves, float air, float leaf, float size) {

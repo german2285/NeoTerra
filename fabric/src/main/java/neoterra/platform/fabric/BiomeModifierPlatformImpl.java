@@ -7,9 +7,9 @@ import neoterra.data.worldgen.preset.settings.Preset;
 public final class BiomeModifierPlatformImpl {
 
 	public static void addPatches(RegistrySetBuilder builder, Preset preset) {
-		// no-op: on Fabric biome modifiers are registered statically via FabricBiomePatches
-		// using Fabric's BiomeModifications API; nothing extra needs to be added to the
-		// preset patch set.
-		NTCommon.debug("Fabric addPatches: no-op (modifiers registered statically via FabricBiomePatches)");
+		// no-op: on Fabric biome modifiers are applied at runtime via the MixinBiome injector
+		// driven by FabricBiomeModifierApplier; nothing extra needs to be added to the preset
+		// patch set at datapack-build time.
+		NTCommon.debug("Fabric addPatches: no-op (modifiers applied via Mixin in FabricBiomeModifierApplier)");
 	}
 }

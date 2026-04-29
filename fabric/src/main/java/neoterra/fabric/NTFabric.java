@@ -15,6 +15,8 @@ import neoterra.client.data.NTLanguageProvider;
 import neoterra.client.data.NTTranslationKeys;
 import neoterra.data.worldgen.preset.settings.Preset;
 import neoterra.data.worldgen.preset.settings.Presets;
+import neoterra.data.worldgen.tags.NTBlockTagsProvider;
+import neoterra.data.worldgen.tags.NTDensityFunctionTagsProvider;
 import neoterra.fabric.biome.FabricBiomeModifierApplier;
 import neoterra.platform.DataGenUtil;
 
@@ -38,13 +40,15 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 		pack.addProvider((FabricDataOutput output) -> new NTLanguageProvider.EnglishUS(output));
 		pack.addProvider((FabricDataOutput output) -> PackMetadataGenerator.forFeaturePack(output, Component.translatable(NTTranslationKeys.METADATA_DESCRIPTION)));
 
+		Preset ntDefaultPreset = Presets.makeNTDefault();
 		CompletableFuture<HolderLookup.Provider> ntDefaultPresetLookup = fabricDataGenerator.getRegistries().thenApplyAsync(provider -> {
 			NTCommon.debug("NTFabric datagen: building patch from Presets.makeNTDefault()");
-			Preset preset = Presets.makeNTDefault();
-			return preset.buildPatch(provider);
+			return ntDefaultPreset.buildPatch(provider);
 		});
 		pack.addProvider((FabricDataOutput output) -> DataGenUtil.createRegistryProvider(output, ntDefaultPresetLookup));
+		pack.addProvider((FabricDataOutput output) -> new NTDensityFunctionTagsProvider(output, ntDefaultPresetLookup));
+		pack.addProvider((FabricDataOutput output) -> new NTBlockTagsProvider(ntDefaultPreset, output, ntDefaultPresetLookup));
 
-		NTCommon.debug("Fabric onInitializeDataGenerator: registered LanguageProvider, PackMetadataGenerator, and NT default preset registry provider");
+		NTCommon.debug("Fabric onInitializeDataGenerator: registered LanguageProvider, PackMetadataGenerator, NT default preset registry provider, density function tags, block tags");
 	}
 }

@@ -1,16 +1,24 @@
 package neoterra.fabric;
 
+import java.util.concurrent.CompletableFuture;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
 import neoterra.NTCommon;
 import neoterra.client.data.NTLanguageProvider;
 import neoterra.client.data.NTTranslationKeys;
+import neoterra.data.worldgen.preset.settings.Preset;
+import neoterra.data.worldgen.preset.settings.Presets;
 import neoterra.fabric.biome.FabricBiomeModifierApplier;
+import neoterra.platform.DataGenUtil;
 
 public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 
@@ -31,6 +39,15 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 
 		pack.addProvider((FabricDataOutput output) -> new NTLanguageProvider.EnglishUS(output));
 		pack.addProvider((FabricDataOutput output) -> PackMetadataGenerator.forFeaturePack(output, Component.translatable(NTTranslationKeys.METADATA_DESCRIPTION)));
-		NTCommon.debug("Fabric onInitializeDataGenerator: registered LanguageProvider and PackMetadataGenerator");
+
+		CompletableFuture<HolderLookup.Provider> ntDefaultPresetLookup = CompletableFuture.supplyAsync(() -> {
+			NTCommon.debug("NTFabric datagen: building patch from Presets.makeNTDefault()");
+			Preset preset = Presets.makeNTDefault();
+			RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+			return preset.buildPatch(registryAccess);
+		});
+		pack.addProvider((FabricDataOutput output) -> DataGenUtil.createRegistryProvider(output, ntDefaultPresetLookup));
+
+		NTCommon.debug("Fabric onInitializeDataGenerator: registered LanguageProvider, PackMetadataGenerator, and NT default preset registry provider");
 	}
 }

@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import neoterra.NTCommon;
 import neoterra.client.data.NTLanguageProvider;
 import neoterra.client.data.NTTranslationKeys;
-import neoterra.fabric.biome.FabricBiomePatches;
+import neoterra.fabric.biome.FabricBiomeModifierApplier;
 
 public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 
@@ -18,8 +18,8 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 	public void onInitialize() {
 		NTCommon.debug("Fabric entry point: onInitialize");
 		NTCommon.bootstrap();
-		NTCommon.debug("Registering Fabric biome patches");
-		FabricBiomePatches.register();
+		NTCommon.debug("Registering Fabric biome modifier applier (server-starting hook)");
+		FabricBiomeModifierApplier.register();
 		NTCommon.debug("Fabric onInitialize complete");
 	}
 

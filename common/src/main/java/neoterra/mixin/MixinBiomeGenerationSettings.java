@@ -1,6 +1,7 @@
 package neoterra.mixin;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,6 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
@@ -17,6 +20,9 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 public interface MixinBiomeGenerationSettings {
 	@Accessor
 	List<HolderSet<PlacedFeature>> getFeatures();
+
+	@Accessor
+	Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> getCarvers();
 
 	@Accessor
 	void setFlowerFeatures(Supplier<List<ConfiguredFeature<?, ?>>> flowerFeatures);

@@ -30,15 +30,19 @@ public class NTNeoForge {
     }
 
     public NTNeoForge(IEventBus modEventBus, ModContainer container) {
+    	NTCommon.LOGGER.debug("NeoForge entry point: NTNeoForge constructor");
     	NTCommon.bootstrap();
 
+    	NTCommon.LOGGER.debug("Registering BIOME_MODIFIER_SERIALIZERS DeferredRegister on mod event bus");
     	BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
 
     	if (FMLEnvironment.dist == Dist.CLIENT) {
+    		NTCommon.LOGGER.debug("Client dist detected, attaching preset editor listeners");
     		modEventBus.addListener(NTNeoForgeClient::registerPresetEditors);
     	}
     	modEventBus.addListener(NTNeoForge::gatherData);
     	RegistryUtilImpl.register(modEventBus);
+    	NTCommon.LOGGER.debug("NeoForge constructor complete");
     }
 
     private static void gatherData(GatherDataEvent event) {

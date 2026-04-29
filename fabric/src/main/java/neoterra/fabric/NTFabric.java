@@ -16,9 +16,11 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 
 	@Override
 	public void onInitialize() {
+		NTCommon.LOGGER.debug("Fabric entry point: onInitialize");
 		NTCommon.bootstrap();
-
+		NTCommon.LOGGER.debug("Registering Fabric biome patches");
 		FabricBiomePatches.register();
+		NTCommon.LOGGER.debug("Fabric onInitialize complete");
 	}
 
 	//TODO merge this with forge's datagen since they're the same now

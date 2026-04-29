@@ -29,24 +29,31 @@ public class NTCommon {
 	public static final Logger LOGGER = LogManager.getLogger("NeoTerra");
 
 	public static void bootstrap() {
+		LOGGER.debug("Bootstrap starting");
 		NTBuiltInRegistries.bootstrap();
+		LOGGER.debug("  built-in registries ready");
 		TemplatePlacements.bootstrap();
 		TemplateDecorators.bootstrap();
 		NTChanceModifiers.bootstrap();
 		NTPlacementModifiers.bootstrap();
 		NTDensityFunctions.bootstrap();
+		LOGGER.debug("  feature subsystems registered (templates, chance, placement, density functions)");
 		Noises.bootstrap();
 		Domains.bootstrap();
 		CurveFunctions.bootstrap();
+		LOGGER.debug("  noise subsystems registered (noises, domains, curves)");
 		NTFeatures.bootstrap();
 		NTHeightProviderTypes.bootstrap();
 		NTFloatProviderTypes.bootstrap();
 		NTSurfaceRules.bootstrap();
 		StructureRules.bootstrap();
+		LOGGER.debug("  features, providers, surface and structure rules registered");
 
 		RegistryUtil.createDataRegistry(NTRegistries.NOISE, Noise.DIRECT_CODEC, false);
 		RegistryUtil.createDataRegistry(NTRegistries.PRESET, Preset.DIRECT_CODEC, false);
 		RegistryUtil.createDataRegistry(NTRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC, false);
+		LOGGER.debug("  data registries created (NOISE, PRESET, STRUCTURE_RULE)");
+		LOGGER.debug("Bootstrap complete");
 	}
 
 	public static ResourceLocation location(String name) {

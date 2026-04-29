@@ -58,6 +58,9 @@ public class PresetBiomeModifierData {
 
 	public static BiomeFeaturePatches collectPatches(Preset preset, HolderGetter<PlacedFeature> placedFeatures, HolderGetter<Biome> biomes) {
 		MiscellaneousSettings miscellaneous = preset.miscellaneous();
+		NTCommon.LOGGER.debug("collectPatches: customBiomeFeatures={}, erosionDecorator={}, naturalSnowDecorator={}, smoothLayerDecorator={}",
+			miscellaneous.customBiomeFeatures, miscellaneous.erosionDecorator,
+			miscellaneous.naturalSnowDecorator, miscellaneous.smoothLayerDecorator);
 
 		HolderSet<Biome> swamps = HolderSet.direct(biomes.getOrThrow(Biomes.SWAMP));
 		HolderSet<Biome> plains = HolderSet.direct(biomes.getOrThrow(Biomes.RIVER), biomes.getOrThrow(Biomes.PLAINS), biomes.getOrThrow(Biomes.SUNFLOWER_PLAINS));
@@ -208,6 +211,7 @@ public class PresetBiomeModifierData {
 			Optional.of(new Filter(swamps, Filter.Behavior.WHITELIST)),
 			HolderSet.direct(placedFeatures.getOrThrow(PresetPlacedFeatures.SWAMP_SURFACE))));
 
+		NTCommon.LOGGER.debug("collectPatches: produced {} adds, {} replaces", adds.size(), replaces.size());
 		return new BiomeFeaturePatches(adds, replaces);
 	}
 

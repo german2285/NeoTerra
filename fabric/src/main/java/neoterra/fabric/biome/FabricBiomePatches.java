@@ -39,8 +39,10 @@ public final class FabricBiomePatches {
 	private static final GenerationStep.Decoration TOP = GenerationStep.Decoration.TOP_LAYER_MODIFICATION;
 
 	public static void register() {
+		NTCommon.LOGGER.debug("FabricBiomePatches.register: registering replace and add modifiers via Fabric BiomeModifications API");
 		registerReplaces();
 		registerAdds();
+		NTCommon.LOGGER.debug("FabricBiomePatches.register: done");
 	}
 
 	private static void registerReplaces() {

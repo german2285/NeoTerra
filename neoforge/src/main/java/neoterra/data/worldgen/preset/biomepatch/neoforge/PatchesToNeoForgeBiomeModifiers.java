@@ -18,6 +18,7 @@ import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers.RemoveFeaturesBiomeModifier;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.PresetBiomeModifierData;
 import neoterra.data.worldgen.preset.biomepatch.BiomeFeaturePatches;
 import neoterra.data.worldgen.preset.biomepatch.Filter;
@@ -30,11 +31,16 @@ import neoterra.world.worldgen.biome.modifier.neoforge.PrependFeaturesBiomeModif
 public final class PatchesToNeoForgeBiomeModifiers {
 
 	public static void bootstrap(BootstrapContext<BiomeModifier> ctx, Preset preset) {
+		NTCommon.LOGGER.debug("PatchesToNeoForgeBiomeModifiers.bootstrap: building NeoForge BiomeModifiers from preset");
 		HolderGetter<PlacedFeature> placedFeatures = ctx.lookup(Registries.PLACED_FEATURE);
 		HolderGetter<Biome> biomes = ctx.lookup(Registries.BIOME);
 		HolderSet<Biome> overworld = biomes.getOrThrow(BiomeTags.IS_OVERWORLD);
 
 		BiomeFeaturePatches patches = PresetBiomeModifierData.collectPatches(preset, placedFeatures, biomes);
+		int prependCount = (int) patches.adds().stream().filter(p -> p.order() == Order.PREPEND).count();
+		int appendCount = patches.adds().size() - prependCount;
+		NTCommon.LOGGER.debug("Registering {} adds ({} prepend / {} append) and {} replaces (each emits _remove + _add)",
+			patches.adds().size(), prependCount, appendCount, patches.replaces().size());
 
 		for (PatchAdd patch : patches.adds()) {
 			HolderSet<Biome> biomeSet = resolveBiomes(patch.filter(), overworld);

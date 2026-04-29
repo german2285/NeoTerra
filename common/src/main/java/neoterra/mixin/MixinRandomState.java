@@ -85,25 +85,31 @@ class MixinRandomState {
 	}
 
 	public void neoterra$NTRandomState$initialize(RegistryAccess registries) {
+		NTCommon.LOGGER.debug("NTRandomState.initialize: seed={}, hasContext={}", this.seed, this.hasContext);
 		RegistryLookup<Preset> presets = registries.lookupOrThrow(NTRegistries.PRESET);
 		RegistryLookup<Noise> noises = registries.lookupOrThrow(NTRegistries.NOISE);
 		RegistryLookup<DensityFunction> functions = registries.lookupOrThrow(Registries.DENSITY_FUNCTION);
 
 		functions.get(NTDensityFunctionTags.ADDITIONAL_NOISE_ROUTER_FUNCTIONS).ifPresent((set) -> {
+			NTCommon.LOGGER.debug("Mapping {} additional noise router functions through density wrapper", set.size());
 			set.forEach((function) -> function.value().mapAll(this.densityFunctionWrapper));
 		});
 
 		presets.get(Preset.KEY).ifPresentOrElse((presetHolder) -> {
 			this.preset = presetHolder.value();
+			NTCommon.LOGGER.debug("Preset {} loaded into RandomState", Preset.KEY.location());
 
 			if(this.hasContext) {
 				PerformanceConfig config = PerformanceConfig.read(PerformanceConfig.DEFAULT_FILE_PATH)
 					.resultOrPartial(NTCommon.LOGGER::error)
 					.orElseGet(PerformanceConfig::makeDefault);
+				NTCommon.LOGGER.debug("Building GeneratorContext: tileSize={}, batchCount={}, parallel={}",
+					config.tileSize(), config.batchCount(), ThreadPools.availableProcessors() > 4);
 				this.generatorContext = GeneratorContext.makeCached(this.preset, noises, (int) this.seed, config.tileSize(), config.batchCount(), ThreadPools.availableProcessors() > 4);
 			}
 		}, () -> {
 			if(this.hasContext) {
+				NTCommon.LOGGER.debug("RandomState requires preset but registry has no entry for {}", Preset.KEY.location());
 //				throw new IllegalStateException("Missing preset!");
 			}
 		});

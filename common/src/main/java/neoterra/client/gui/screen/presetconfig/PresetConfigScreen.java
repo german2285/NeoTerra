@@ -80,7 +80,7 @@ public class PresetConfigScreen extends LinkedPageScreen {
 		copyToZip(datagenOutputPath, outputPath);
 		PathUtils.deleteDirectory(datagenPath);
 		
-		NTCommon.LOGGER.info("Exported datapack to {}", outputPath);
+		NTCommon.LOGGER.debug("Exported datapack to {}", outputPath);
 	}
 	
 	private static void copyToZip(Path input, Path output) {

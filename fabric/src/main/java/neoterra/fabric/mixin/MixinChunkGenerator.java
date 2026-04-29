@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.FeatureSorter;
+import net.minecraft.world.level.biome.FeatureSorter;
 import neoterra.world.worldgen.biome.IInvalidatableFeaturesPerStep;
 import neoterra.world.worldgen.biome.InvalidatableSupplier;
 

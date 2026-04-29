@@ -8,8 +8,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
 import neoterra.NTCommon;
@@ -40,11 +38,10 @@ public class NTFabric implements ModInitializer, DataGeneratorEntrypoint {
 		pack.addProvider((FabricDataOutput output) -> new NTLanguageProvider.EnglishUS(output));
 		pack.addProvider((FabricDataOutput output) -> PackMetadataGenerator.forFeaturePack(output, Component.translatable(NTTranslationKeys.METADATA_DESCRIPTION)));
 
-		CompletableFuture<HolderLookup.Provider> ntDefaultPresetLookup = CompletableFuture.supplyAsync(() -> {
+		CompletableFuture<HolderLookup.Provider> ntDefaultPresetLookup = fabricDataGenerator.getRegistries().thenApplyAsync(provider -> {
 			NTCommon.debug("NTFabric datagen: building patch from Presets.makeNTDefault()");
 			Preset preset = Presets.makeNTDefault();
-			RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
-			return preset.buildPatch(registryAccess);
+			return preset.buildPatch(provider);
 		});
 		pack.addProvider((FabricDataOutput output) -> DataGenUtil.createRegistryProvider(output, ntDefaultPresetLookup));
 

@@ -4,7 +4,7 @@
       "type": "neoterra:overworld",
       "generator": {
         "type": "minecraft:noise",
-        "settings": "minecraft:overworld",
+        "settings": "neoterra:overworld",
         "biome_source": {
           "type": "minecraft:multi_noise",
           "preset": "minecraft:overworld"

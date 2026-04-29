@@ -49,7 +49,7 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 		return new Preset(this.world.copy(), this.surface.copy(), this.caves.copy(), this.climate.copy(), this.terrain.copy(), this.rivers.copy(), this.filters.copy(), this.structures.copy(), this.miscellaneous.copy());
 	}
 
-	public HolderLookup.Provider buildPatch(RegistryAccess registries) {
+	public HolderLookup.Provider buildPatch(HolderLookup.Provider registries) {
 		NTCommon.debug("Preset.buildPatch: starting");
 		long t0 = System.currentTimeMillis();
 		RegistrySetBuilder builder = new RegistrySetBuilder();

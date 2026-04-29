@@ -9,6 +9,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import neoterra.NTCommon;
+import neoterra.data.worldgen.NTWorldgenKeys;
 import neoterra.data.worldgen.preset.settings.CaveSettings;
 import neoterra.data.worldgen.preset.settings.Preset;
 import neoterra.data.worldgen.preset.settings.WorldSettings;
@@ -31,7 +32,7 @@ public class PresetNoiseGeneratorSettings {
 
 		CaveSettings caveSettings = preset.caves();
 
-		ctx.register(NoiseGeneratorSettings.OVERWORLD, new NoiseGeneratorSettings(
+		ctx.register(NTWorldgenKeys.OVERWORLD_NOISE_SETTINGS, new NoiseGeneratorSettings(
 			NoiseSettings.create(-worldDepth, worldDepth + worldHeight, 1, 2),
 			Blocks.STONE.defaultBlockState(), Blocks.WATER.defaultBlockState(),
 			PresetNoiseRouterData.overworld(preset, densityFunctions, noiseParams, noises),
@@ -43,6 +44,6 @@ public class PresetNoiseGeneratorSettings {
 			caveSettings.largeOreVeins,
 			false
 		));
-		NTCommon.debug("PresetNoiseGeneratorSettings.bootstrap: registered minecraft:overworld overlay in {} ms (seaLevel={}, worldDepth={}, worldHeight={}, largeOreVeins={})", System.currentTimeMillis() - t0, properties.seaLevel, worldDepth, worldHeight, caveSettings.largeOreVeins);
+		NTCommon.debug("PresetNoiseGeneratorSettings.bootstrap: registered neoterra:overworld in {} ms (seaLevel={}, worldDepth={}, worldHeight={}, largeOreVeins={})", System.currentTimeMillis() - t0, properties.seaLevel, worldDepth, worldHeight, caveSettings.largeOreVeins);
     }
 }

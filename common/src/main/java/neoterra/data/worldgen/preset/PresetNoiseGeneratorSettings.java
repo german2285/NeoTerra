@@ -23,12 +23,12 @@ public class PresetNoiseGeneratorSettings {
 		HolderGetter<DensityFunction> densityFunctions = ctx.lookup(Registries.DENSITY_FUNCTION);
 		HolderGetter<NormalNoise.NoiseParameters> noiseParams = ctx.lookup(Registries.NOISE);
 		HolderGetter<Noise> noises = ctx.lookup(NTRegistries.NOISE);
-		
+
 		WorldSettings worldSettings = preset.world();
 		WorldSettings.Properties properties = worldSettings.properties;
 		int worldHeight = properties.worldHeight;
 		int worldDepth = properties.worldDepth;
-		
+
 		CaveSettings caveSettings = preset.caves();
 
 		ctx.register(NoiseGeneratorSettings.OVERWORLD, new NoiseGeneratorSettings(
@@ -43,6 +43,6 @@ public class PresetNoiseGeneratorSettings {
 			caveSettings.largeOreVeins,
 			false
 		));
-		NTCommon.debug("PresetNoiseGeneratorSettings.bootstrap: registered OVERWORLD in {} ms (seaLevel={}, worldDepth={}, worldHeight={}, largeOreVeins={})", System.currentTimeMillis() - t0, properties.seaLevel, worldDepth, worldHeight, caveSettings.largeOreVeins);
+		NTCommon.debug("PresetNoiseGeneratorSettings.bootstrap: registered minecraft:overworld overlay in {} ms (seaLevel={}, worldDepth={}, worldHeight={}, largeOreVeins={})", System.currentTimeMillis() - t0, properties.seaLevel, worldDepth, worldHeight, caveSettings.largeOreVeins);
     }
 }

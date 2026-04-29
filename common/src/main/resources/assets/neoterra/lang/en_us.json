@@ -1,5 +1,5 @@
 {
-  "generator.neoterra.default": "NeoTerra",
+  "generator.neoterra.overworld": "NeoTerra",
   "neoterra.error.noMessage": "{No error message}",
   "neoterra.gui.button.biomeEdgeType": "Type",
   "neoterra.gui.button.biomeEdgeType.tooltip": "The noise type",

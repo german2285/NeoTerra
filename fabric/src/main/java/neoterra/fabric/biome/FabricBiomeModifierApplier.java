@@ -17,6 +17,7 @@ import neoterra.data.worldgen.preset.PresetBiomeModifierData;
 import neoterra.data.worldgen.preset.biomepatch.BiomeFeaturePatches;
 import neoterra.data.worldgen.preset.settings.Preset;
 import neoterra.registries.NTRegistries;
+import neoterra.world.worldgen.biome.IInvalidatableFeaturesPerStep;
 import neoterra.world.worldgen.biome.IModifiableBiome;
 
 public final class FabricBiomeModifierApplier {
@@ -50,6 +51,16 @@ public final class FabricBiomeModifierApplier {
 		biomes.listElements().forEach(holder -> {
 			Biome biome = holder.value();
 			((IModifiableBiome) (Object) biome).neoterra$applyPatches(patches, holder, overworld);
+		});
+
+		// Сбрасываем мемоизированный ChunkGenerator.featuresPerStep — иначе он
+		// останется построенным по немодифицированным биомам, и applyBiomeDecoration
+		// упадёт с IndexOutOfBoundsException на новых фичах.
+		server.getAllLevels().forEach(level -> {
+			Object generator = level.getChunkSource().getGenerator();
+			if (generator instanceof IInvalidatableFeaturesPerStep inv) {
+				inv.neoterra$invalidateFeaturesPerStep();
+			}
 		});
 	}
 

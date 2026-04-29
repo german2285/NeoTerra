@@ -9,6 +9,7 @@
   ],
   "mixins": [
   	"MixinBiome",
+  	"MixinChunkGenerator",
   	"MixinChunkStatusTasks",
   	"MixinMinecraftServer"
   ],

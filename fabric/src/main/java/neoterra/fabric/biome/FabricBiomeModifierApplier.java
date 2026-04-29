@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import neoterra.NTCommon;
 import neoterra.data.worldgen.preset.PresetBiomeModifierData;
@@ -97,12 +98,18 @@ public final class FabricBiomeModifierApplier {
 		// Сбрасываем мемоизированный ChunkGenerator.featuresPerStep — иначе он
 		// останется построенным по немодифицированным биомам, и applyBiomeDecoration
 		// упадёт с IndexOutOfBoundsException на новых фичах.
+		// На SERVER_STARTING server.getAllLevels() ещё пустой; ChunkGenerator'ы
+		// доступны только через Registries.LEVEL_STEM.
+		HolderLookup.RegistryLookup<LevelStem> stems = registries.lookupOrThrow(Registries.LEVEL_STEM);
+		NTCommon.debug("FabricBiomeModifierApplier: LEVEL_STEM registry has {} entries", stems.listElements().count());
 		AtomicInteger invalidated = new AtomicInteger();
 		AtomicInteger notInvalidatable = new AtomicInteger();
-		server.getAllLevels().forEach(level -> {
-			Object generator = level.getChunkSource().getGenerator();
-			NTCommon.debug("FabricBiomeModifierApplier: level {} → generator class {}",
-				level.dimension().location(), generator.getClass().getName());
+		stems.listElements().forEach(stemHolder -> {
+			LevelStem stem = stemHolder.value();
+			Object generator = stem.generator();
+			String stemKey = stemHolder.unwrapKey().map(k -> k.location().toString()).orElse("<unkeyed>");
+			NTCommon.debug("FabricBiomeModifierApplier: levelStem {} → generator class {}",
+				stemKey, generator.getClass().getName());
 			if (generator instanceof IInvalidatableFeaturesPerStep inv) {
 				inv.neoterra$invalidateFeaturesPerStep();
 				invalidated.incrementAndGet();

@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import neoterra.client.gui.screen.presetconfig.PresetEditorPage;
+import neoterra.NTCommon;
 
 public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelectionList<WidgetList.Entry<T>> {
 	private boolean renderSelected;
@@ -30,6 +30,34 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
     public <W extends T> W addWidget(W widget) {
         super.addEntry(new Entry<>(widget));
         return widget;
+    }
+
+    @Override
+    public boolean mouseClicked(double mx, double my, int button) {
+        for (Entry<T> entry : this.children()) {
+            T widget = entry.getWidget();
+            if (widget.visible && widget.isMouseOver(mx, my)) {
+                if (entry.mouseClicked(mx, my, button)) {
+                    this.setFocused(entry);
+                    this.setDragging(true);
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(mx, my, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        for (Entry<T> entry : this.children()) {
+            T widget = entry.getWidget();
+            if (widget.visible && widget.isMouseOver(mx, my)) {
+                if (widget.mouseScrolled(mx, my, scrollX, scrollY)) {
+                    return true;
+                }
+            }
+        }
+        return super.mouseScrolled(mx, my, scrollX, scrollY);
     }
 
     public void setRenderSelected(boolean renderSelected) {
@@ -76,9 +104,6 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
             widget.visible = true;
             widget.setWidth(optionWidth);
             widget.setHeight(height - 1);
-            if(widget instanceof PresetEditorPage.Preview preview) {
-            	widget.setHeight(widget.getWidth());
-            }
             widget.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
 

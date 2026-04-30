@@ -1,7 +1,6 @@
 package neoterra.client.gui.screen.presetconfig;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
@@ -113,12 +112,8 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	public void onDone() {
 		super.onDone();
 
-		try {
-			NTCommon.debug("PresetEditorPage.onDone: applying preset '{}'", this.preset.getName().getString());
-			this.screen.applyPreset(this.preset);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NTCommon.debug("PresetEditorPage.onDone: applying preset '{}'", this.preset.getName().getString());
+		this.screen.applyPreset(this.preset);
 	}
 	
 	public class Preview extends Button {

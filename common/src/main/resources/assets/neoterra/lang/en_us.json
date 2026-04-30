@@ -1,6 +1,7 @@
 {
   "generator.neoterra.overworld": "NeoTerra",
   "neoterra.error.noMessage": "{No error message}",
+  "neoterra.gui.applyingPreset": "Applying preset",
   "neoterra.gui.button.biomeEdgeType": "Type",
   "neoterra.gui.button.biomeEdgeType.tooltip": "The noise type",
   "neoterra.gui.button.climateSeedOffset": "Seed Offset",

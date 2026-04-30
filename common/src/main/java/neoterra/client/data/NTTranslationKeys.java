@@ -8,6 +8,8 @@ public final class NTTranslationKeys {
 	public static final String MUD_SWAMPS_METADATA_DESCRIPTION = resolve("mudSwamps.metadata.description");
 	public static final String NO_ERROR_MESSAGE = resolve("error.noMessage");
 
+	public static final String GUI_APPLYING_PRESET = resolve("gui.applyingPreset");
+
 	public static final String GUI_INPUT_PROMPT = resolve("gui.selectPreset.inputPrompt");
 	
 	public static final String GUI_SELECT_PRESET_MISSING_LEGACY_PRESETS = resolve("gui.selectPreset.missingLegacyPresets");

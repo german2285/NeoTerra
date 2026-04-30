@@ -161,14 +161,10 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, PresetEntry, Abstr
 	@Override
 	public void onDone() {
 		super.onDone();
-		
+
 		Entry<PresetEntry> selected = this.left.getSelected();
 		if(selected != null) {
-			try {
-				this.screen.applyPreset(selected.getWidget());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			this.screen.applyPreset(selected.getWidget());
 		}
 	}
 	

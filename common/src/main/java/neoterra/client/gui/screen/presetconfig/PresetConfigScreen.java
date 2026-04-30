@@ -68,7 +68,9 @@ public class PresetConfigScreen extends LinkedPageScreen {
 
 	public static final class PreviewState {
 		public RenderMode renderMode = RenderMode.BIOME_TYPE;
-		public int previewExp = 3;
+		public float zoom = 1.0F;
+		public float panX;
+		public float panY;
 		public final EnumMap<RenderMode, NativeImage> imageCache = new EnumMap<>(RenderMode.class);
 
 		public void invalidate() {

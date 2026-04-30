@@ -21,7 +21,6 @@ import neoterra.client.gui.screen.page.BisectedPage;
 import neoterra.client.gui.screen.presetconfig.PresetConfigScreen.PreviewState;
 import neoterra.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
 import neoterra.client.gui.widget.PreviewWidget;
-import neoterra.client.gui.widget.Slider;
 import neoterra.client.gui.widget.ValueButton;
 import neoterra.concurrent.cache.CacheManager;
 import neoterra.config.PerformanceConfig;
@@ -41,9 +40,7 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	private static final int PREVIEW_MAX_SIZE = 200;
 	private static final int PREVIEW_GAP = 8;
 	private static final long REGENERATE_DEBOUNCE_MS = 400L;
-	private static final int PREVIEW_EXP_MIN = 1;
-	private static final int PREVIEW_EXP_MAX = 3;
-	private static final int PREVIEW_EXP_OFFSET = 7;
+	private static final int TILE_FACTOR = 6;
 	private static final ScheduledExecutorService DEBOUNCE_SCHEDULER = Executors.newSingleThreadScheduledExecutor(runnable -> {
 		Thread thread = new Thread(runnable, "NeoTerra-PreviewDebounce");
 		thread.setDaemon(true);
@@ -54,7 +51,6 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	protected PreviewWidget preview;
 	private CycleButton<RenderMode> renderModeButton;
 	private ValueButton<Integer> seedButton;
-	private Slider previewSizeSlider;
 	private ScheduledFuture<?> pendingRegenerate;
 
 	public PresetEditorPage(PresetConfigScreen screen, PresetEntry preset) {
@@ -65,10 +61,6 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 
 	private PreviewState state() {
 		return this.screen.getPreviewState();
-	}
-
-	private int currentTileFactor() {
-		return this.state().previewExp + PREVIEW_EXP_OFFSET - 4;
 	}
 
 	protected void regenerate() {
@@ -113,8 +105,7 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 		PerformanceConfig config = PerformanceConfig.read(PerformanceConfig.DEFAULT_FILE_PATH)
 			.resultOrPartial(NTCommon.LOGGER::error)
 			.orElseGet(PerformanceConfig::makeDefault);
-		int factor = this.currentTileFactor();
-		GeneratorContext generatorContext = GeneratorContext.makeUncached(preset, noises, (int) settings.options().seed(), factor, 0, config.batchCount());
+		GeneratorContext generatorContext = GeneratorContext.makeUncached(preset, noises, (int) settings.options().seed(), TILE_FACTOR, 0, config.batchCount());
 
 		int centerX = 0;
 		int centerZ = 0;
@@ -164,23 +155,9 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 			this.state().invalidate();
 			this.regenerateNow();
 		});
-		this.previewSizeSlider = EditorWidgets.createIntSlider(state.previewExp, PREVIEW_EXP_MIN, PREVIEW_EXP_MAX, NTTranslationKeys.GUI_SLIDER_PREVIEW_SIZE, (slider, value) -> {
-			int newExp = (int) slider.lerpValue(value);
-			PreviewState s = this.state();
-			if (newExp != s.previewExp) {
-				int oldFactor = this.currentTileFactor();
-				s.previewExp = newExp;
-				if (this.currentTileFactor() != oldFactor) {
-					s.invalidate();
-					this.regenerateNow();
-				}
-			}
-			return value;
-		});
 
 		this.right.addWidget(this.renderModeButton);
 		this.right.addWidget(this.seedButton);
-		this.right.addWidget(this.previewSizeSlider);
 
 		int columnWidth = this.right.getWidth();
 		int previewSize = Math.max(0, Math.min(PREVIEW_MAX_SIZE, columnWidth));
@@ -191,6 +168,7 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 		this.right.setHeight(Math.max(0, this.right.getHeight() - reservedTop));
 
 		this.preview = new PreviewWidget(previewX, previewY, previewSize);
+		this.preview.setView(state.zoom, state.panX, state.panY);
 		((ScreenInvoker) this.screen).invokeAddRenderableWidget(this.preview);
 
 		this.regenerateNow();
@@ -209,6 +187,10 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 			NTCommon.debug("PresetEditorPage.onClose: saving preset '{}' and closing preview", this.preset.getName().getString());
 			this.preset.save();
 			if (this.preview != null) {
+				PreviewState state = this.state();
+				state.zoom = this.preview.getZoom();
+				state.panX = this.preview.getPanX();
+				state.panY = this.preview.getPanY();
 				this.preview.close();
 				this.preview = null;
 			}

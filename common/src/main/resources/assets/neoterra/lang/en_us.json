@@ -106,6 +106,7 @@
   "neoterra.gui.preset.vanillaish.name": "Vanilla-ish (Legacy)",
   "neoterra.gui.riverSettings.title": "River Settings",
   "neoterra.gui.selectPreset.inputPrompt": "Type preset name",
+  "neoterra.gui.selectPreset.inputPromptShort": "Name…",
   "neoterra.gui.selectPreset.missingLegacyPresets": "Couldn't find any legacy presets",
   "neoterra.gui.selectPreset.title": "Presets & Defaults",
   "neoterra.gui.slider.beach": "Beach",

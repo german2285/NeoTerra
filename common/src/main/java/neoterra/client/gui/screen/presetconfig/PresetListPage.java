@@ -28,6 +28,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.toasts.SystemToast.SystemToastId;
+import neoterra.client.gui.widget.AdaptiveEditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.GsonHelper;
@@ -79,13 +80,19 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, PresetEntry, Abstr
 	public void init() {
 		super.init();
 		
-		this.input = PresetWidgets.createEditBox(this.screen.font, (text) -> {
+		AdaptiveEditBox adaptive = new AdaptiveEditBox(
+			this.screen.font,
+			Component.translatable(NTTranslationKeys.GUI_INPUT_PROMPT).withStyle(ChatFormatting.DARK_GRAY),
+			Component.translatable(NTTranslationKeys.GUI_INPUT_PROMPT_SHORT).withStyle(ChatFormatting.DARK_GRAY)
+		);
+		adaptive.setResponder((text) -> {
 			boolean isValid = this.isValidPresetName(text);
 			final int white = 14737632;
 			final int red = 0xFFFF3F30;
 			this.createPreset.active = isValid;
 			this.input.setTextColor(isValid ? white : red);
-		}, Component.translatable(NTTranslationKeys.GUI_INPUT_PROMPT).withStyle(ChatFormatting.DARK_GRAY));
+		});
+		this.input = adaptive;
 		this.createPreset = PresetWidgets.createThrowingButton(NTTranslationKeys.GUI_BUTTON_CREATE, () -> {
 			new PresetEntry(Component.literal(this.input.getValue()), Presets.makeLegacyDefault(), false, this).save();
 			this.rebuildPresets();
@@ -227,16 +234,29 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, PresetEntry, Abstr
 	}
 	
 	public static class PresetEntry extends Label {
+		private static final int TEXT_PADDING_X = 4;
+
 		private Component name;
 		private Preset preset;
 		private boolean builtin;
-		
+
 		public PresetEntry(Component name, Preset preset, boolean builtin, OnPress onPress) {
 			super(-1, -1, -1, -1, onPress, name);
-			
+
 			this.name = name;
 			this.preset = preset;
 			this.builtin = builtin;
+		}
+
+		@Override
+		public void renderWidget(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+			net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+			int textWidth = mc.font.width(this.getMessage());
+			int textX = textWidth + TEXT_PADDING_X * 2 <= this.getWidth()
+				? this.getX() + (this.getWidth() - textWidth) / 2
+				: this.getX() + TEXT_PADDING_X;
+			int textY = this.getY() + (this.height - 8) / 2;
+			graphics.drawString(mc.font, this.getMessage(), textX, textY, 0xFFFFFF);
 		}
 		
 		public PresetEntry(Component name, Preset preset, boolean builtin, PresetListPage page) {

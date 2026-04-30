@@ -25,6 +25,11 @@ public class Label extends Button {
 	@Override
 	public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		Minecraft minecraft = Minecraft.getInstance();
-        graphics.drawString(minecraft.font, this.getMessage(), this.getX(), this.getY() + (this.height - 8) / 2, 0xFFFFFF);
+		int textWidth = minecraft.font.width(this.getMessage());
+		int textX = textWidth <= this.getWidth()
+			? this.getX() + (this.getWidth() - textWidth) / 2
+			: this.getX();
+		int textY = this.getY() + (this.height - 8) / 2;
+		graphics.drawString(minecraft.font, this.getMessage(), textX, textY, 0xFFFFFF);
 	}
 }

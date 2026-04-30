@@ -71,6 +71,7 @@ public class PresetConfigScreen extends LinkedPageScreen {
 		public float zoom = 1.0F;
 		public float panX;
 		public float panY;
+		public Object lastPresetIdentity;
 		public final EnumMap<RenderMode, NativeImage> imageCache = new EnumMap<>(RenderMode.class);
 
 		public void invalidate() {

@@ -145,6 +145,10 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 		}
 
 		PreviewState state = this.state();
+		if (state.lastPresetIdentity != this.preset) {
+			state.invalidate();
+			state.lastPresetIdentity = this.preset;
+		}
 
 		this.renderModeButton = EditorWidgets.createCycle(RenderMode.values(), state.renderMode, NTTranslationKeys.GUI_BUTTON_RENDER_MODE, (button, value) -> {
 			state.renderMode = value;

@@ -11,6 +11,7 @@ public final class NTTranslationKeys {
 	public static final String GUI_APPLYING_PRESET = resolve("gui.applyingPreset");
 
 	public static final String GUI_INPUT_PROMPT = resolve("gui.selectPreset.inputPrompt");
+	public static final String GUI_INPUT_PROMPT_SHORT = resolve("gui.selectPreset.inputPromptShort");
 	
 	public static final String GUI_SELECT_PRESET_MISSING_LEGACY_PRESETS = resolve("gui.selectPreset.missingLegacyPresets");
 	public static final String GUI_SELECT_PRESET_TITLE = resolve("gui.selectPreset.title");

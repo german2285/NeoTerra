@@ -69,19 +69,24 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
         return this.renderSelected && Objects.equals(this.getSelected(), this.children().get(i));
     }
 
+    private static final int SCROLLBAR_WIDTH = 6;
+    private static final int SCROLLBAR_GAP = 4;
+    private static final int LEFT_MARGIN = 10;
+    private static final int RIGHT_MARGIN = 4;
+
     @Override
     public int getRowWidth() {
-        return this.width - 20;
+        return Math.max(0, this.width - LEFT_MARGIN - SCROLLBAR_GAP - SCROLLBAR_WIDTH - RIGHT_MARGIN);
     }
 
     @Override
     public int getRowLeft() {
-        return this.getX() + (this.width - this.getRowWidth()) / 2;
+        return this.getX() + LEFT_MARGIN;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.getRowRight();
+        return this.getX() + this.width - RIGHT_MARGIN - SCROLLBAR_WIDTH;
     }
 
     public static class Entry<T extends AbstractWidget> extends ContainerObjectSelectionList.Entry<Entry<T>> {

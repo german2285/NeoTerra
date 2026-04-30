@@ -71,20 +71,29 @@ public class IslandPopulator implements CellPopulator {
         float upperHeight = cell.height;
         cell.height = NoiseUtil.lerp(lowerHeight, upperHeight, alpha);
     }
-    
+
     private static IslandType upperPopulator(Levels levels, int depth) {
-    	// TODO sample noise for this, thisll give us the islands we want
-    	float archipelagoMaxAlpha = 0.01F;
-		float archipelagoMin = levels.water(5);
+    	Noise islandShapeNoise = Noises.simplex(8429, 800, 2);
+    	islandShapeNoise = Noises.clamp(islandShapeNoise, 0.0F, 1.0F);
+    	final Noise shapeNoise = islandShapeNoise;
+
+    	float baseMaxAlpha = 0.01F;
+		float archipelagoMin = levels.water(25);
 		float archipelagoMax = levels.water(depth);
     	return (cell, x, y, islandAlpha) -> {
+    		float shape = shapeNoise.compute(x, y, 0);
+    		float archipelagoMaxAlpha = baseMaxAlpha * (0.5F + shape * 1.5F);
+
     		float archipelagoAlpha = islandAlpha;
     		if(archipelagoAlpha > archipelagoMaxAlpha) {
     			archipelagoAlpha -= (archipelagoAlpha - archipelagoMaxAlpha);
     		}
 
     		cell.terrain = TerrainType.MUSHROOM_FIELDS;
+    		cell.erosion = 0.0F;
+    		cell.weirdness = 0.0F;
     		cell.height = NoiseUtil.lerp(archipelagoMin, archipelagoMax, archipelagoAlpha);
+    		cell.erosionMask = true;
     	};
     }
     

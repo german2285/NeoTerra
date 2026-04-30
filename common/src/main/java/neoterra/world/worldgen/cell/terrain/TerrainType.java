@@ -32,7 +32,6 @@ public class TerrainType {
     public static final Terrain LAGOON = register("lagoon", TerrainCategory.ISLAND);
     public static final Terrain DEEP_LAGOON = register("deep_lagoon", TerrainCategory.ISLAND);
     public static final Terrain ARCHIPELAGO = register("archipelago", TerrainCategory.ISLAND);
-    public static final Terrain MUSHROOM_ARCHIPELAGO = register("mushroom_archipelago", TerrainCategory.ISLAND);
     public static final Terrain MUSHROOM_FIELDS = register("mushroom_fields", TerrainCategory.ISLAND);
 
     public static void forEach(Consumer<Terrain> action) {

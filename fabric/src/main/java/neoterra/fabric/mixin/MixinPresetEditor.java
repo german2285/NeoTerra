@@ -21,7 +21,7 @@ import neoterra.data.worldgen.NTWorldgenKeys;
 // На NeoForge для этого есть штатный RegisterPresetEditorsEvent (см. NTNeoForgeClient).
 // На Fabric API публичного аналога нет — тот же хак применяют TerraForged /
 // ReTerraForged / NeoTerraForged. Если/когда Fabric API добавит хук — мигрируем,
-// см. TODO/todo/fabric-api-preset-editor-watch.md.
+// см. TODO.md в корне репозитория.
 @Mixin(PresetEditor.class)
 interface MixinPresetEditor {
 

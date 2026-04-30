@@ -17,7 +17,11 @@ import neoterra.data.worldgen.NTWorldgenKeys;
 // зарегистрировать editor для своего worldgen preset, поэтому Redirect перехватывает
 // вызов Map.of и возвращает modifiable HashMap, в который PUT'аем editor для нашего
 // neoterra:overworld.
-@Deprecated
+//
+// На NeoForge для этого есть штатный RegisterPresetEditorsEvent (см. NTNeoForgeClient).
+// На Fabric API публичного аналога нет — тот же хак применяют TerraForged /
+// ReTerraForged / NeoTerraForged. Если/когда Fabric API добавит хук — мигрируем,
+// см. TODO/todo/fabric-api-preset-editor-watch.md.
 @Mixin(PresetEditor.class)
 interface MixinPresetEditor {
 

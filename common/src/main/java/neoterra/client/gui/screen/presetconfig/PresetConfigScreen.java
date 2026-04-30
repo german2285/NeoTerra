@@ -8,10 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+
+import com.mojang.blaze3d.platform.NativeImage;
 
 import org.apache.commons.io.file.PathUtils;
 
@@ -37,10 +40,15 @@ import neoterra.data.worldgen.preset.settings.Preset;
 public class PresetConfigScreen extends LinkedPageScreen {
 	private CreateWorldScreen parent;
 	private volatile CompletableFuture<Void> applying;
+	private final PreviewState previewState = new PreviewState();
 
 	public PresetConfigScreen(CreateWorldScreen parent) {
 		this.parent = parent;
 		this.currentPage = new PresetListPage(this);
+	}
+
+	public PreviewState getPreviewState() {
+		return this.previewState;
 	}
 
 	@Override
@@ -54,7 +62,21 @@ public class PresetConfigScreen extends LinkedPageScreen {
 			return;
 		}
 		super.onClose();
+		this.previewState.invalidate();
 		this.minecraft.setScreen(this.parent);
+	}
+
+	public static final class PreviewState {
+		public RenderMode renderMode = RenderMode.BIOME_TYPE;
+		public int previewExp = 3;
+		public final EnumMap<RenderMode, NativeImage> imageCache = new EnumMap<>(RenderMode.class);
+
+		public void invalidate() {
+			for (NativeImage image : this.imageCache.values()) {
+				image.close();
+			}
+			this.imageCache.clear();
+		}
 	}
 
 	public void setSeed(long seed) {

@@ -75,6 +75,11 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
     }
 
     @Override
+    public int getRowLeft() {
+        return this.getX() + (this.width - this.getRowWidth()) / 2;
+    }
+
+    @Override
     protected int getScrollbarPosition() {
         return this.getRowRight();
     }

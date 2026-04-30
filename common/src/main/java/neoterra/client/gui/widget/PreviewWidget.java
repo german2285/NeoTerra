@@ -3,14 +3,19 @@ package neoterra.client.gui.widget;
 import com.mojang.blaze3d.platform.NativeImage;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import neoterra.NTCommon;
+import neoterra.client.data.NTTranslationKeys;
+import neoterra.world.worldgen.cell.Cell;
+import neoterra.world.worldgen.densityfunction.tile.Tile;
 
 public class PreviewWidget extends AbstractWidget {
 	public static final int CANVAS_SIZE = 1024;
@@ -25,6 +30,11 @@ public class PreviewWidget extends AbstractWidget {
 	private float zoom = 1.0F;
 	private float panX;
 	private float panY;
+
+	private Tile tile;
+	private int worldCenterX;
+	private int worldCenterZ;
+	private float blocksPerPixel = 1.0F;
 
 	public PreviewWidget(int x, int y, int size) {
 		super(x, y, size, size, CommonComponents.EMPTY);
@@ -54,6 +64,13 @@ public class PreviewWidget extends AbstractWidget {
 		}
 		this.getCanvas().copyFrom(source);
 		this.uploadCanvas();
+	}
+
+	public void setTile(Tile tile, int worldCenterX, int worldCenterZ, float blocksPerPixel) {
+		this.tile = tile;
+		this.worldCenterX = worldCenterX;
+		this.worldCenterZ = worldCenterZ;
+		this.blocksPerPixel = blocksPerPixel;
 	}
 
 	public void resetView() {
@@ -125,6 +142,52 @@ public class PreviewWidget extends AbstractWidget {
 
 		guiGraphics.fill(x - 1, y - 1, x + w + 1, y + h + 1, 0xFF000000);
 		guiGraphics.blit(this.textureId, x, y, w, h, u, v, (int) Math.max(1F, visible), (int) Math.max(1F, visible), CANVAS_SIZE, CANVAS_SIZE);
+
+		if (this.tile != null && this.isMouseOver(mouseX, mouseY)) {
+			this.drawHoverOverlay(guiGraphics, mouseX, mouseY);
+		}
+	}
+
+	private void drawHoverOverlay(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		float widgetSize = this.getWidth();
+		float fracX = (mouseX - this.getX()) / widgetSize;
+		float fracY = (mouseY - this.getY()) / widgetSize;
+
+		float visible = this.visibleSize();
+		float canvasX = (CANVAS_SIZE - visible) / 2F + this.panX + fracX * visible;
+		float canvasY = (CANVAS_SIZE - visible) / 2F + this.panY + fracY * visible;
+
+		int pixelX = Mth.clamp((int) canvasX, 0, CANVAS_SIZE - 1);
+		int pixelZ = Mth.clamp((int) canvasY, 0, CANVAS_SIZE - 1);
+
+		int border = this.tile.getBlockSize().border();
+		Cell cell = this.tile.getCellRaw(border + pixelX, border + pixelZ);
+		if (cell == null || cell.biome == null) {
+			return;
+		}
+
+		int worldX = this.worldCenterX + Math.round((pixelX - CANVAS_SIZE / 2F) * this.blocksPerPixel);
+		int worldZ = this.worldCenterZ + Math.round((pixelZ - CANVAS_SIZE / 2F) * this.blocksPerPixel);
+
+		Component biomeName = Component.translatable(NTTranslationKeys.biome(cell.biome.name()));
+		String terrainId = cell.terrain != null ? cell.terrain.getName() : "?";
+		Component terrainName = Component.literal(terrainId);
+		Component coords = Component.translatable(NTTranslationKeys.GUI_LABEL_PREVIEW_COORDS, worldX, worldZ);
+
+		Font font = Minecraft.getInstance().font;
+		int padding = 3;
+		int lineHeight = font.lineHeight + 1;
+		int textWidth = Math.max(Math.max(font.width(biomeName), font.width(terrainName)), font.width(coords));
+		int boxWidth = textWidth + padding * 2;
+		int boxHeight = lineHeight * 3 + padding * 2;
+
+		int boxX = this.getX() + padding;
+		int boxY = this.getY() + this.getHeight() - padding - boxHeight;
+
+		guiGraphics.fill(boxX, boxY, boxX + boxWidth, boxY + boxHeight, 0xC0000000);
+		guiGraphics.drawString(font, biomeName, boxX + padding, boxY + padding, 0xFFFFFFFF);
+		guiGraphics.drawString(font, terrainName, boxX + padding, boxY + padding + lineHeight, 0xFFCCAA66);
+		guiGraphics.drawString(font, coords, boxX + padding, boxY + padding + lineHeight * 2, 0xFFAAAAAA);
 	}
 
 	@Override

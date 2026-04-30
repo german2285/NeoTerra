@@ -163,6 +163,11 @@ public final class NTTranslationKeys {
 	public static final String GUI_LABEL_PREVIEW_AREA = resolve("gui.label.previewArea");
 	public static final String GUI_LABEL_PREVIEW_TERRAIN = resolve("gui.label.previewTerrain");
 	public static final String GUI_LABEL_PREVIEW_BIOME = resolve("gui.label.previewBiome");
+	public static final String GUI_LABEL_PREVIEW_COORDS = resolve("gui.label.previewCoords");
+
+	public static String biome(String biomeName) {
+		return resolve("biome." + biomeName.toLowerCase());
+	}
 	public static final String GUI_LABEL_CONTINENT = resolve("gui.label.continent");
 	public static final String GUI_LABEL_CONTROL_POINTS = resolve("gui.label.controlPoints");
 	public static final String GUI_LABEL_PROPERTIES = resolve("gui.label.properties");

@@ -52,6 +52,9 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 	private CycleButton<RenderMode> renderModeButton;
 	private ValueButton<Integer> seedButton;
 	private ScheduledFuture<?> pendingRegenerate;
+	private Tile currentTile;
+	private int currentTileCenterX;
+	private int currentTileCenterZ;
 
 	public PresetEditorPage(PresetConfigScreen screen, PresetEntry preset) {
 		super(screen);
@@ -85,6 +88,9 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 		NativeImage cached = state.imageCache.get(state.renderMode);
 		if (cached != null) {
 			this.preview.setImage(cached);
+			if (this.currentTile != null) {
+				this.preview.setTile(this.currentTile, this.currentTileCenterX, this.currentTileCenterZ, DEFAULT_ZOOM);
+			}
 			return;
 		}
 
@@ -133,6 +139,14 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 
 		state.imageCache.put(state.renderMode, image);
 		this.preview.setImage(image);
+
+		if (this.currentTile != null) {
+			this.currentTile.close();
+		}
+		this.currentTile = tile;
+		this.currentTileCenterX = centerX;
+		this.currentTileCenterZ = centerZ;
+		this.preview.setTile(tile, centerX, centerZ, DEFAULT_ZOOM);
 	}
 
 	@Override
@@ -197,6 +211,10 @@ public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, 
 				state.panY = this.preview.getPanY();
 				this.preview.close();
 				this.preview = null;
+			}
+			if (this.currentTile != null) {
+				this.currentTile.close();
+				this.currentTile = null;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
